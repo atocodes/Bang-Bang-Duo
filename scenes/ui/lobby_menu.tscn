@@ -1,0 +1,146 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/lobby_menu.gd" id="1_menu"]
+
+[node name="LobbyMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_menu")
+
+[node name="MenuPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -220.0
+offset_right = 200.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "BANG BANG DUO"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = "3D Modular Multiplayer Starter"
+horizontal_alignment = 1
+
+[node name="HSeparator1" type="HSeparator" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameRow" type="VBoxContainer" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="MenuPanel/VBoxContainer/NameRow"]
+layout_mode = 2
+text = "Player Name:"
+
+[node name="NameInput" type="LineEdit" parent="MenuPanel/VBoxContainer/NameRow"]
+layout_mode = 2
+text = "Player"
+placeholder_text = "Enter nickname..."
+
+[node name="HostButton" type="Button" parent="MenuPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Host Server (Port 8910)"
+
+[node name="HSeparator2" type="HSeparator" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="JoinSection" type="VBoxContainer" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="IPLabel" type="Label" parent="MenuPanel/VBoxContainer/JoinSection"]
+layout_mode = 2
+text = "Server IP & Port:"
+
+[node name="IPInput" type="LineEdit" parent="MenuPanel/VBoxContainer/JoinSection"]
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "127.0.0.1"
+
+[node name="PortInput" type="LineEdit" parent="MenuPanel/VBoxContainer/JoinSection"]
+layout_mode = 2
+text = "8910"
+placeholder_text = "8910"
+
+[node name="JoinButton" type="Button" parent="MenuPanel/VBoxContainer/JoinSection"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Join Game"
+
+[node name="StatusLabel" type="Label" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Ready to connect..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HUD" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 70.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+
+[node name="VBoxContainer" type="HBoxContainer" parent="HUD/MarginContainer"]
+layout_mode = 2
+
+[node name="HUDStatus" type="Label" parent="HUD/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Connected | Active Players: 1"
+
+[node name="DisconnectButton" type="Button" parent="HUD/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Disconnect"
+
+[node name="ControlsInfo" type="Label" parent="HUD"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -60.0
+offset_right = 350.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+theme_override_font_sizes/font_size = 13
+text = "WASD: Move | Space: Jump | Shift: Sprint
+ESC: Toggle Mouse Capture"
