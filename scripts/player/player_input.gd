@@ -13,6 +13,7 @@ extends Node
 var move_direction: Vector2 = Vector2.ZERO
 var is_jumping: bool = false
 var is_sprinting: bool = false
+var is_firing: bool = false
 
 # Reference to the root player
 @onready var player: CharacterBody3D = get_parent()
@@ -44,6 +45,12 @@ static func _ensure_default_actions() -> void:
 				event.physical_keycode = keycode
 				InputMap.action_add_event(action_name, event)
 
+	if not InputMap.has_action("fire"):
+		InputMap.add_action("fire")
+		var event = InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		InputMap.action_add_event("fire", event)
+
 
 func _physics_process(_delta: float) -> void:
 	if not player.is_multiplayer_authority():
@@ -60,3 +67,4 @@ func _physics_process(_delta: float) -> void:
 	# Gather action inputs
 	is_jumping = Input.is_action_just_pressed("jump")
 	is_sprinting = Input.is_action_pressed("sprint")
+	is_firing = Input.is_action_just_pressed("fire") and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED

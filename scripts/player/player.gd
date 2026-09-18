@@ -61,3 +61,49 @@ func _physics_process(delta: float) -> void:
 	# Only the player authority simulates local physics and movement
 	if is_multiplayer_authority():
 		movement_component.process_movement(delta, camera_pivot.get_yaw_basis())
+		if input_component and input_component.is_firing:
+			_shoot()
+
+
+func _shoot() -> void:
+	var aim_point: Vector3 = camera_pivot.get_aim_point(100.0)
+	var shoot_origin: Vector3 = global_position + Vector3(0.4, 1.2, 0)
+	
+	# Spawn a tracer beam
+	_spawn_tracer(shoot_origin, aim_point)
+
+	# Audio feedback
+	_play_shoot_sound()
+
+
+func _spawn_tracer(from_pos: Vector3, to_pos: Vector3) -> void:
+	var mesh_inst := MeshInstance3D.new()
+	var imm_mesh := ImmediateMesh.new()
+	mesh_inst.mesh = imm_mesh
+	
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Color(0.0, 1.0, 0.9, 0.9)
+	mesh_inst.material_override = mat
+
+	imm_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	imm_mesh.surface_add_vertex(from_pos)
+	imm_mesh.surface_add_vertex(to_pos)
+	imm_mesh.surface_end()
+
+	get_tree().root.add_child(mesh_inst)
+
+	# Fade and destroy tracer quickly
+	var tween := mesh_inst.create_tween()
+	tween.tween_property(mat, "albedo_color:a", 0.0, 0.12)
+	tween.tween_callback(mesh_inst.queue_free)
+
+
+func _play_shoot_sound() -> void:
+	var sfx := AudioStreamPlayer.new()
+	sfx.stream = load("res://assets/kenney_ui/Sounds/tap-a.ogg")
+	sfx.pitch_scale = randf_range(1.2, 1.4)
+	sfx.volume_db = -4.0
+	add_child(sfx)
+	sfx.play()
+	sfx.finished.connect(sfx.queue_free)

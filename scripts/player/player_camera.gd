@@ -11,16 +11,22 @@ extends Node3D
 @export var max_pitch: float = 80.0
 
 @onready var player: CharacterBody3D = get_parent()
-@onready var camera_node: Camera3D = $Camera3D
+@onready var spring_arm: SpringArm3D = get_node_or_null("SpringArm3D")
+@onready var camera_node: Camera3D = (
+	get_node_or_null("SpringArm3D/Camera3D") if has_node("SpringArm3D/Camera3D")
+	else get_node_or_null("Camera3D")
+)
 
 var _pitch: float = 0.0
 
 func _ready() -> void:
 	if player.is_multiplayer_authority():
-		camera_node.current = true
+		if camera_node:
+			camera_node.current = true
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
-		camera_node.current = false
+		if camera_node:
+			camera_node.current = false
 		set_process_unhandled_input(false)
 
 
@@ -28,7 +34,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not player.is_multiplayer_authority():
 		return
 
-	# Handle mouse release on UI cancel (Escape) or recapture on click
+	# Recapture mouse on click if in-game
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			get_viewport().set_input_as_handled()
+			return
+
+	# Handle mouse release on UI cancel (Escape) or toggle
 	if event.is_action_pressed("ui_cancel"):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -37,7 +50,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	# Handle mouse look
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		# Horizontal rotation (Yaw) rotates the entire player or camera mount
+		# Horizontal rotation (Yaw) rotates the entire player
 		player.rotate_y(-event.relative.x * mouse_sensitivity)
 
 		# Vertical rotation (Pitch) rotates the camera mount only
@@ -49,3 +62,25 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Returns the yaw transform basis for movement calculation
 func get_yaw_basis() -> Basis:
 	return player.global_transform.basis
+
+
+## Returns direct ray from camera for third-person over-the-shoulder aiming
+func get_aim_ray(max_distance: float = 150.0) -> Dictionary:
+	if not camera_node:
+		return {}
+	var space_state = player.get_world_3d().direct_space_state
+	var from = camera_node.global_position
+	var to = from - camera_node.global_transform.basis.z * max_distance
+	var query = PhysicsRayQueryParameters3D.create(from, to)
+	query.exclude = [player.get_rid()]
+	return space_state.intersect_ray(query)
+
+
+## Returns the 3D aim target point in the world
+func get_aim_point(max_distance: float = 150.0) -> Vector3:
+	var hit = get_aim_ray(max_distance)
+	if not hit.is_empty():
+		return hit.position
+	if camera_node:
+		return camera_node.global_position - camera_node.global_transform.basis.z * max_distance
+	return player.global_position - player.global_transform.basis.z * max_distance

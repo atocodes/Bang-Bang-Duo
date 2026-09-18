@@ -1,12 +1,12 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://b6tucjlprhnfd"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/world.tscn" id="1_world"]
 [ext_resource type="PackedScene" path="res://scenes/ui/lobby_menu.tscn" id="2_ui"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" unique_id=1850840322]
 
-[node name="World" parent="." instance=ExtResource("1_world")]
+[node name="World" parent="." unique_id=423311826 instance=ExtResource("1_world")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1013390413]
 
-[node name="LobbyMenu" parent="CanvasLayer" instance=ExtResource("2_ui")]
+[node name="LobbyMenu" parent="CanvasLayer" unique_id=2474992 instance=ExtResource("2_ui")]

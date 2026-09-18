@@ -18,14 +18,24 @@ boot_splash/image="uid://dyo5wcy6wlqoy"
 config/icon="res://icon.svg"
 boot_splash/minimum_display_time=3000
 
+[audio]
+
+driver/enable_input=true
+
 [autoload]
 
 NetworkManager="*res://scripts/network/network_manager.gd"
+DotEnv="*uid://dfoeh5novf76"
 
 [display]
 
+window/size/mode=2
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dotenv/plugin.cfg", "res://addons/voxide/plugin.cfg")
 
 [input]
 

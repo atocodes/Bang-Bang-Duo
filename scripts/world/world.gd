@@ -15,16 +15,27 @@ extends Node3D
 
 @onready var players_container: Node3D = $Players
 @onready var spawn_points: Node3D = $SpawnPoints
+@onready var menu_camera: Camera3D = get_node_or_null("MenuCamera")
 
 func _ready() -> void:
+	if menu_camera:
+		menu_camera.current = true
+
 	# Connect to NetworkManager signals
 	NetworkManager.player_connected.connect(_on_player_connected)
 	NetworkManager.player_disconnected.connect(_on_player_disconnected)
+	NetworkManager.server_closed.connect(_on_server_closed)
 
 	# If server already had players registered (like host), spawn them
 	if multiplayer.is_server():
 		for peer_id in NetworkManager.players:
 			_spawn_player(peer_id)
+
+
+func _on_server_closed() -> void:
+	if menu_camera:
+		menu_camera.current = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _on_player_connected(peer_id: int, _info: Dictionary) -> void:
@@ -51,18 +62,24 @@ func _spawn_player(peer_id: int) -> void:
 	# Determine spawn position
 	var spawn_pos = _get_spawn_position(peer_id)
 	player_instance.position = spawn_pos
-
+	
 	players_container.add_child(player_instance, true)
 	print("World: Spawned player %d at %s" % [peer_id, str(spawn_pos)])
+	
+	if menu_camera and (peer_id == multiplayer.get_unique_id() or (peer_id == 1 and multiplayer.is_server())):
+		menu_camera.current = false
 
 
 ## Removes and frees a player node on the server.
 func _despawn_player(peer_id: int) -> void:
 	var node_name = str(peer_id)
-	if players_container.has_node(node_name):
-		var p = players_container.get_node(node_name)
-		p.queue_free()
+	var player_node = players_container.get_node_or_null(node_name)
+	if player_node:
+		player_node.queue_free()
 		print("World: Despawned player %d" % peer_id)
+		if peer_id == multiplayer.get_unique_id() and menu_camera:
+			menu_camera.current = true
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 ## Picks a spawn point or calculates an offset position

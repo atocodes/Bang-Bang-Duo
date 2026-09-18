@@ -39,6 +39,11 @@ environment = SubResource("Environment_1")
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 10, 0)
 shadow_enabled = true
 
+[node name="MenuCamera" type="Camera3D" parent="."]
+transform = Transform3D(0.92388, -0.191342, 0.331414, 0, 0.866025, 0.5, -0.382683, -0.46194, 0.800103, 9, 8.5, 15)
+current = true
+fov = 65.0
+
 [node name="MapGeometry" type="Node3D" parent="."]
 
 [node name="MainFloor" type="CSGBox3D" parent="MapGeometry"]
