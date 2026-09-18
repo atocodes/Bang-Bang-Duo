@@ -49,10 +49,17 @@ extends Control
 # --- Settings Panel Controls ---
 @onready var settings_back_button: Button = $CenterArea/SettingsPanel/VBox/SettingsBackButton
 
-# --- In-Game HUD ---
+# --- In-Game HUD (4 Corners) ---
 @onready var hud_panel: Control = $HUD
-@onready var hud_status: Label = $HUD/TopBar/HBox/HUDStatus
-@onready var disconnect_button: Button = $HUD/TopBar/HBox/DisconnectButton
+@onready var hud_player_name: Label = $HUD/TopLeftCard/Panel/VBox/PlayerNameLabel
+@onready var hud_role_badge: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/RoleBadge
+@onready var hud_active_players: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/ActivePlayers
+@onready var disconnect_button: Button = $HUD/TopRightCard/DisconnectButton
+@onready var hud_weapon_name: Label = $HUD/BottomRightCard/Panel/VBox/WeaponNameLabel
+@onready var hud_ammo_current: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoCurrentLabel
+@onready var hud_ammo_reserve: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoReserveLabel
+
+var _hooked_weapon_manager: PlayerWeaponManager = null
 
 var _current_panel: Control
 var _detected_ip: String = "127.0.0.1"
@@ -105,7 +112,7 @@ func _ready() -> void:
 	NetworkManager.connection_failed.connect(_on_connection_failed)
 	NetworkManager.server_closed.connect(_on_server_closed)
 	NetworkManager.player_connected.connect(_update_player_hud)
-	NetworkManager.player_disconnected.connect(func(_id, _info): _update_player_hud(0, {}))
+	NetworkManager.player_disconnected.connect(func(_id: int): _update_player_hud())
 
 	# Setup Voxide Voice AI
 	_setup_voxide_integration()
@@ -186,6 +193,7 @@ func _on_name_changed(new_name: String) -> void:
 
 func _on_disconnect_pressed() -> void:
 	NetworkManager.disconnect_game()
+	_set_ui_state(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
@@ -289,15 +297,51 @@ func _voice_cmd_set_name(new_name: String) -> void:
 		_on_name_changed(new_name)
 
 
+# --- In-Game Weapon Hooking ---
+func hook_local_player_weapon(wm: PlayerWeaponManager) -> void:
+	if _hooked_weapon_manager and is_instance_valid(_hooked_weapon_manager):
+		if _hooked_weapon_manager.weapon_changed.is_connected(_on_weapon_changed):
+			_hooked_weapon_manager.weapon_changed.disconnect(_on_weapon_changed)
+		if _hooked_weapon_manager.ammo_changed.is_connected(_on_ammo_changed):
+			_hooked_weapon_manager.ammo_changed.disconnect(_on_ammo_changed)
+	
+	_hooked_weapon_manager = wm
+	if not wm:
+		return
+	
+	wm.weapon_changed.connect(_on_weapon_changed)
+	wm.ammo_changed.connect(_on_ammo_changed)
+	
+	var cur := wm.get_current_weapon()
+	if cur:
+		_on_weapon_changed(cur)
+		_on_ammo_changed(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+
+
+func _on_weapon_changed(w: WeaponData) -> void:
+	if not w:
+		return
+	if hud_weapon_name:
+		hud_weapon_name.text = w.weapon_name
+		hud_weapon_name.modulate = w.bullet_color
+
+
+func _on_ammo_changed(cur: int, reserve: int, is_infinite: bool) -> void:
+	if hud_ammo_current:
+		hud_ammo_current.text = "INF" if is_infinite else str(cur)
+	if hud_ammo_reserve:
+		hud_ammo_reserve.text = "" if is_infinite else "/ %d" % reserve
+
+
 # --- Network Events ---
 func _on_server_started() -> void:
 	_set_ui_state(true)
-	hud_status.text = "Hosting Match | Players: 1"
+	_update_player_hud()
 
 
 func _on_connection_successful() -> void:
 	_set_ui_state(true)
-	hud_status.text = "Connected as %s (ID: %d)" % [NetworkManager.local_player_name, multiplayer.get_unique_id()]
+	_update_player_hud()
 
 
 func _on_connection_failed() -> void:
@@ -313,11 +357,20 @@ func _on_server_closed() -> void:
 		join_status_label.text = "DISCONNECTED FROM HOST."
 
 
-func _update_player_hud(_id: int, _info: Dictionary) -> void:
-	if hud_panel.visible:
+func _update_player_hud(_id: int = 0, _info: Dictionary = {}) -> void:
+	if not hud_panel:
+		return
+	var my_id := multiplayer.get_unique_id()
+	var my_name := NetworkManager.get_player_name(my_id)
+	if hud_player_name:
+		hud_player_name.text = my_name
+	if hud_role_badge:
+		hud_role_badge.text = "ROLE: HOST" if multiplayer.is_server() else "ROLE: CLIENT"
+	if hud_active_players:
 		var count := NetworkManager.players.size()
-		var role := "Hosting" if multiplayer.is_server() else "Connected"
-		hud_status.text = "%s | Active Players: %d" % [role, count]
+		if count == 0 and multiplayer.multiplayer_peer:
+			count = 1
+		hud_active_players.text = "PLAYERS: %d" % count
 
 
 ## Controls screen visibility and strict Voxide lifecycle between Main Menu and Gameplay.

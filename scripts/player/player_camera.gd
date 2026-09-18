@@ -23,6 +23,9 @@ func _ready() -> void:
 	if player.is_multiplayer_authority():
 		if camera_node:
 			camera_node.current = true
+		var menu_cam: Camera3D = get_tree().root.find_child("MenuCamera", true, false) as Camera3D
+		if menu_cam:
+			menu_cam.current = false
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	else:
 		if camera_node:
@@ -31,6 +34,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not multiplayer.has_multiplayer_peer():
+		return
 	if not player.is_multiplayer_authority():
 		return
 
@@ -64,23 +69,45 @@ func get_yaw_basis() -> Basis:
 	return player.global_transform.basis
 
 
-## Returns direct ray from camera for third-person over-the-shoulder aiming
+## Returns the exact 2D screen coordinate of the crosshair.
+func get_crosshair_screen_position() -> Vector2:
+	var viewport := player.get_viewport()
+	if not viewport:
+		return Vector2.ZERO
+	var vp_size := viewport.get_visible_rect().size
+	# If the HUD crosshair is present in the tree, query its exact center
+	var crosshair: Control = viewport.get_node_or_null("CanvasLayer/LobbyMenu/HUD/Crosshair")
+	if crosshair and crosshair.is_inside_tree() and crosshair.visible:
+		var rect := crosshair.get_global_rect()
+		return rect.get_center()
+	# Fallback to configured over-the-shoulder offset (55% X, 46% Y)
+	return Vector2(vp_size.x * 0.55, vp_size.y * 0.46)
+
+
+## Returns direct ray from camera projected through the crosshair for third-person over-the-shoulder aiming
 func get_aim_ray(max_distance: float = 150.0) -> Dictionary:
 	if not camera_node:
 		return {}
-	var space_state = player.get_world_3d().direct_space_state
-	var from = camera_node.global_position
-	var to = from - camera_node.global_transform.basis.z * max_distance
-	var query = PhysicsRayQueryParameters3D.create(from, to)
+	var screen_pos := get_crosshair_screen_position()
+	var from := camera_node.project_ray_origin(screen_pos)
+	var dir := camera_node.project_ray_normal(screen_pos)
+	var to := from + dir * max_distance
+
+	var space_state := player.get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(from, to)
 	query.exclude = [player.get_rid()]
+	query.collision_mask = 1 | 2 # collide with environment and other players
 	return space_state.intersect_ray(query)
 
 
-## Returns the 3D aim target point in the world
+## Returns the 3D aim target point in the world projected straight through the crosshair
 func get_aim_point(max_distance: float = 150.0) -> Vector3:
-	var hit = get_aim_ray(max_distance)
+	var hit := get_aim_ray(max_distance)
 	if not hit.is_empty():
 		return hit.position
 	if camera_node:
-		return camera_node.global_position - camera_node.global_transform.basis.z * max_distance
+		var screen_pos := get_crosshair_screen_position()
+		var from := camera_node.project_ray_origin(screen_pos)
+		var dir := camera_node.project_ray_normal(screen_pos)
+		return from + dir * max_distance
 	return player.global_position - player.global_transform.basis.z * max_distance

@@ -22,6 +22,7 @@ func _ready() -> void:
 		menu_camera.current = true
 
 	# Connect to NetworkManager signals
+	NetworkManager.server_started.connect(_on_server_started)
 	NetworkManager.player_connected.connect(_on_player_connected)
 	NetworkManager.player_disconnected.connect(_on_player_disconnected)
 	NetworkManager.server_closed.connect(_on_server_closed)
@@ -32,10 +33,21 @@ func _ready() -> void:
 			_spawn_player(peer_id)
 
 
+func _on_server_started() -> void:
+	_clear_all_players()
+
+
 func _on_server_closed() -> void:
+	_clear_all_players()
 	if menu_camera:
 		menu_camera.current = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _clear_all_players() -> void:
+	for child in players_container.get_children():
+		players_container.remove_child(child)
+		child.queue_free()
 
 
 func _on_player_connected(peer_id: int, _info: Dictionary) -> void:
@@ -52,9 +64,11 @@ func _on_player_disconnected(peer_id: int) -> void:
 func _spawn_player(peer_id: int) -> void:
 	var node_name = str(peer_id)
 	
-	# Prevent duplicate spawning
+	# If any existing node with this name exists, clean it up immediately
 	if players_container.has_node(node_name):
-		return
+		var old_player = players_container.get_node(node_name)
+		players_container.remove_child(old_player)
+		old_player.queue_free()
 
 	var player_instance = player_scene.instantiate()
 	player_instance.name = node_name
@@ -66,7 +80,7 @@ func _spawn_player(peer_id: int) -> void:
 	players_container.add_child(player_instance, true)
 	print("World: Spawned player %d at %s" % [peer_id, str(spawn_pos)])
 	
-	if menu_camera and (peer_id == multiplayer.get_unique_id() or (peer_id == 1 and multiplayer.is_server())):
+	if menu_camera:
 		menu_camera.current = false
 
 
@@ -75,6 +89,7 @@ func _despawn_player(peer_id: int) -> void:
 	var node_name = str(peer_id)
 	var player_node = players_container.get_node_or_null(node_name)
 	if player_node:
+		players_container.remove_child(player_node)
 		player_node.queue_free()
 		print("World: Despawned player %d" % peer_id)
 		if peer_id == multiplayer.get_unique_id() and menu_camera:

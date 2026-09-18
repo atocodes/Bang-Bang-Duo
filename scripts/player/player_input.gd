@@ -53,6 +53,8 @@ static func _ensure_default_actions() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	if not multiplayer.has_multiplayer_peer():
+		return
 	if not player.is_multiplayer_authority():
 		return
 	

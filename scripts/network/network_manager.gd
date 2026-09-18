@@ -25,6 +25,17 @@ var players: Dictionary = {}
 # Local player's profile info
 var local_player_name: String = "Player"
 
+## Returns the resolved player display name
+func get_player_name(id: int) -> String:
+	if players.has(id):
+		var n := str(players[id].get("name", "")).strip_edges()
+		if not n.is_empty():
+			return n
+	if id == multiplayer.get_unique_id() or (id == 1 and multiplayer.is_server()):
+		if not local_player_name.is_empty():
+			return local_player_name
+	return "Player %d" % id
+
 func _ready() -> void:
 	# Connect to Godot's built-in multiplayer API signals
 	multiplayer.peer_connected.connect(_on_peer_connected)
