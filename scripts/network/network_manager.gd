@@ -24,6 +24,7 @@ var players: Dictionary = {}
 
 # Local player's profile info
 var local_player_name: String = "Player"
+var local_player_character: String = "Weyzero Codes"
 
 ## Returns the resolved player display name
 func get_player_name(id: int) -> String:
@@ -35,6 +36,17 @@ func get_player_name(id: int) -> String:
 		if not local_player_name.is_empty():
 			return local_player_name
 	return "Player %d" % id
+
+
+## Returns the resolved player chosen character model
+func get_player_character(id: int) -> String:
+	if players.has(id):
+		var c := str(players[id].get("character", "")).strip_edges()
+		if not c.is_empty():
+			return c
+	if id == multiplayer.get_unique_id() or (id == 1 and multiplayer.is_server()):
+		return local_player_character
+	return "Weyzero Codes"
 
 func _ready() -> void:
 	# Connect to Godot's built-in multiplayer API signals
@@ -59,7 +71,8 @@ func host_game(port: int = DEFAULT_PORT, max_clients: int = DEFAULT_MAX_CLIENTS)
 	# Register host (ID = 1 in Godot multiplayer)
 	players[1] = {
 		"id": 1,
-		"name": local_player_name
+		"name": local_player_name,
+		"character": local_player_character
 	}
 	
 	print("NetworkManager: Server hosted on port %d (Host ID: 1)" % port)
@@ -117,7 +130,11 @@ func _on_connected_to_server() -> void:
 	print("NetworkManager: Successfully connected to server! My ID: %d" % my_id)
 	
 	# Send our info to the server
-	_register_player.rpc_id(1, my_id, {"id": my_id, "name": local_player_name})
+	_register_player.rpc_id(1, my_id, {
+		"id": my_id,
+		"name": local_player_name,
+		"character": local_player_character
+	})
 	connection_successful.emit()
 
 

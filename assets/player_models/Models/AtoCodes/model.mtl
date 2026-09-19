@@ -1,0 +1,10 @@
+# Exported from Supavoxel
+
+newmtl tripo_material_5fe7b37c-a9f6-4d7f-9ad0-e84f72c95918
+Kd 1.000000 1.000000 1.000000
+Ka 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+map_Kd tripo_material_5fe7b37c-a9f6-4d7f-9ad0-e84f72c95918_diffuse_0.png
+map_Bump tripo_material_5fe7b37c-a9f6-4d7f-9ad0-e84f72c95918_normal_1.png

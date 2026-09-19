@@ -26,6 +26,10 @@ extends Control
 @onready var settings_btn: Button = $CenterArea/MenuButtonsPanel/VBox/SettingsBtn
 @onready var quit_btn: Button = $CenterArea/MenuButtonsPanel/VBox/QuitBtn
 
+# --- Character Selection Buttons ---
+@onready var weyzero_btn: Button = get_node_or_null("CenterArea/MenuButtonsPanel/VBox/CharacterRow/WeyzeroBtn")
+@onready var ato_btn: Button = get_node_or_null("CenterArea/MenuButtonsPanel/VBox/CharacterRow/AtoBtn")
+
 # --- Host Panel Controls ---
 @onready var host_ip_label: Label = $CenterArea/HostPanel/VBox/IPDisplayContainer/HBox/HostIPValue
 @onready var copy_ip_button: Button = $CenterArea/HostPanel/VBox/IPDisplayContainer/HBox/CopyIPButton
@@ -56,9 +60,12 @@ extends Control
 @onready var hud_active_players: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/ActivePlayers
 @onready var disconnect_button: Button = $HUD/TopRightCard/DisconnectButton
 @onready var hud_weapon_name: Label = $HUD/BottomRightCard/Panel/VBox/WeaponNameLabel
+@onready var hud_shoot_type: Label = get_node_or_null("HUD/BottomRightCard/Panel/VBox/ShootTypeLabel")
 @onready var hud_ammo_current: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoCurrentLabel
 @onready var hud_ammo_reserve: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoReserveLabel
+@onready var pickup_toast: Label = get_node_or_null("HUD/PickupToast")
 
+var _toast_tween: Tween = null
 var _hooked_weapon_manager: PlayerWeaponManager = null
 
 var _current_panel: Control
@@ -92,6 +99,13 @@ func _ready() -> void:
 	# Wire Player Name & Randomizer
 	name_input.text_changed.connect(_on_name_changed)
 	random_name_btn.pressed.connect(_on_random_pressed)
+
+	# Wire Character Selection
+	if weyzero_btn:
+		weyzero_btn.pressed.connect(func(): _select_character("Weyzero Codes"))
+	if ato_btn:
+		ato_btn.pressed.connect(func(): _select_character("Ato Codes"))
+	_select_character(NetworkManager.local_player_character)
 
 	# Wire Host Actions
 	copy_ip_button.pressed.connect(_on_copy_ip_pressed)
@@ -191,6 +205,15 @@ func _on_name_changed(new_name: String) -> void:
 		NetworkManager.local_player_name = clean
 
 
+func _select_character(char_name: String) -> void:
+	NetworkManager.local_player_character = char_name
+	var is_weyzero := (char_name == "Weyzero Codes")
+	if weyzero_btn:
+		weyzero_btn.modulate = Color(1.0, 1.0, 1.0, 1.0) if is_weyzero else Color(0.65, 0.7, 0.8, 0.6)
+	if ato_btn:
+		ato_btn.modulate = Color(1.0, 1.0, 1.0, 1.0) if not is_weyzero else Color(0.65, 0.7, 0.8, 0.6)
+
+
 func _on_disconnect_pressed() -> void:
 	NetworkManager.disconnect_game()
 	_set_ui_state(false)
@@ -277,9 +300,24 @@ func _register_voxide_tools() -> void:
 		call_deferred("_voice_cmd_set_name", new_name)
 		return { "status": "success", "player_name": new_name }
 
+	# Tool: Select Character
+	var char_tool := VoxideTool.new("select_character", "Choose player hero character: Weyzero Codes or Ato Codes.")
+	char_tool.parameters = {
+		"character": { "type": "string", "description": "Character name: Weyzero Codes or Ato Codes.", "required": true }
+	}
+	char_tool.handler = func(args: Dictionary) -> Dictionary:
+		var choice := str(args.get("character", "Weyzero Codes"))
+		if "ato" in choice.to_lower():
+			choice = "Ato Codes"
+		else:
+			choice = "Weyzero Codes"
+		call_deferred("_select_character", choice)
+		return { "status": "success", "character": choice }
+
 	voxide_voice.register_tool(host_tool)
 	voxide_voice.register_tool(join_tool)
 	voxide_voice.register_tool(name_tool)
+	voxide_voice.register_tool(char_tool)
 
 
 func _voice_cmd_host(port: int) -> void:
@@ -324,6 +362,26 @@ func _on_weapon_changed(w: WeaponData) -> void:
 	if hud_weapon_name:
 		hud_weapon_name.text = w.weapon_name
 		hud_weapon_name.modulate = w.bullet_color
+	if hud_shoot_type:
+		hud_shoot_type.text = "[%s]" % w.shoot_type
+		hud_shoot_type.modulate = w.bullet_color.lerp(Color.WHITE, 0.25)
+
+
+func show_pickup_notification(w: WeaponData) -> void:
+	if not pickup_toast or not w:
+		return
+	if _toast_tween and _toast_tween.is_valid():
+		_toast_tween.kill()
+
+	pickup_toast.text = "ACQUIRED: %s [%s]" % [w.weapon_name, w.shoot_type]
+	pickup_toast.modulate = w.bullet_color
+	pickup_toast.visible = true
+	pickup_toast.modulate.a = 1.0
+
+	_toast_tween = create_tween()
+	_toast_tween.tween_interval(2.2)
+	_toast_tween.tween_property(pickup_toast, "modulate:a", 0.0, 0.5)
+	_toast_tween.tween_callback(func(): pickup_toast.visible = false)
 
 
 func _on_ammo_changed(cur: int, reserve: int, is_infinite: bool) -> void:

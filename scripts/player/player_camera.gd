@@ -20,7 +20,9 @@ extends Node3D
 var _pitch: float = 0.0
 
 func _ready() -> void:
-	if player.is_multiplayer_authority():
+	var has_net := multiplayer.has_multiplayer_peer()
+	var is_auth := not has_net or player.is_multiplayer_authority()
+	if is_auth:
 		if camera_node:
 			camera_node.current = true
 		var menu_cam: Camera3D = get_tree().root.find_child("MenuCamera", true, false) as Camera3D
@@ -34,9 +36,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not multiplayer.has_multiplayer_peer():
-		return
-	if not player.is_multiplayer_authority():
+	if multiplayer.has_multiplayer_peer() and not player.is_multiplayer_authority():
 		return
 
 	# Recapture mouse on click if in-game

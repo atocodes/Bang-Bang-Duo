@@ -77,6 +77,10 @@ func _spawn_player(peer_id: int) -> void:
 	var spawn_pos = _get_spawn_position(peer_id)
 	player_instance.position = spawn_pos
 	
+	# Determine character model chosen by player
+	var char_choice: String = NetworkManager.get_player_character(peer_id)
+	player_instance.character_model = char_choice
+	
 	players_container.add_child(player_instance, true)
 	print("World: Spawned player %d at %s" % [peer_id, str(spawn_pos)])
 	

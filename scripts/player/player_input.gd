@@ -20,8 +20,8 @@ var is_firing: bool = false
 
 func _ready() -> void:
 	_ensure_default_actions()
-	# Disable processing if this node does NOT belong to the local peer
-	if not player.is_multiplayer_authority():
+	# Disable processing if this node belongs to a remote peer
+	if multiplayer.has_multiplayer_peer() and not player.is_multiplayer_authority():
 		set_process_unhandled_input(false)
 		set_physics_process(false)
 
@@ -53,9 +53,7 @@ static func _ensure_default_actions() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if not multiplayer.has_multiplayer_peer():
-		return
-	if not player.is_multiplayer_authority():
+	if multiplayer.has_multiplayer_peer() and not player.is_multiplayer_authority():
 		return
 	
 	# Gather directional movement (X = Left/Right, Y = Forward/Backward)

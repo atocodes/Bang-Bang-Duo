@@ -3,25 +3,77 @@ extends CharacterBody3D
 
 ## Player Root Controller
 ## Coordinates sub-components (Input, Movement, Camera, Visuals, Weapons) and manages multiplayer authority.
-##
-## Node naming convention: When instantiated by the server, the node name is set to the peer ID
-## (e.g. "1" for host, "12345678" for client).
+## Supports character model selection (Weyzero Codes / Ato Codes) and modular weapons with LeftHandIK.
 
 @export var peer_id: int = 1:
 	set(value):
 		peer_id = value
 		_update_authority()
 
+@export_enum("Weyzero Codes", "Ato Codes") var character_model: String = "Weyzero Codes":
+	set(value):
+		character_model = value
+		if is_node_ready():
+			_apply_character_model()
+
 @onready var input_component: PlayerInput = $PlayerInput
 @onready var movement_component: PlayerMovement = $PlayerMovement
 @onready var camera_pivot: PlayerCamera = $CameraPivot
 @onready var nametag_label: Label3D = $Nametag
-@onready var mesh_instance: MeshInstance3D = $Visuals/BodyMesh
-@onready var weapon_mount: Node3D = get_node_or_null("Visuals/WeaponMount")
-@onready var muzzle: Marker3D = get_node_or_null("Visuals/WeaponMount/Muzzle")
-@onready var energy_core: MeshInstance3D = get_node_or_null("Visuals/WeaponMount/EnergyCore")
 @onready var synchronizer: MultiplayerSynchronizer = $MultiplayerSynchronizer
 @onready var weapon_manager: PlayerWeaponManager = get_node_or_null("WeaponManager")
+
+var anim_tree: AnimationTree = null
+var anim_playback: AnimationNodeStateMachinePlayback = null
+var left_hand_ik: SkeletonIK3D = null
+var muzzle: Marker3D = null
+var _current_active_char: Node3D = null
+
+const HAND_MOUNT_TRANSFORM := Transform3D(
+	Vector3(0.09297797, -0.036952548, -0.48988742),
+	Vector3(0.47958136, -0.101325534, 0.09866498),
+	Vector3(-0.10656808, -0.48822916, 0.016601466),
+	Vector3(0.05050964, 0.13812436, 0.043544248)
+)
+
+const WEAPON_CONFIGS: Dictionary = {
+	"rifle": {
+		"model_name": "Rifile",
+		"scene": "res://assets/kenny_blaster_kit/Rifile.fbx",
+		"grip_pos": Vector3(0.058, 0.032, -0.286),
+		"muzzle_pos": Vector3(0.0, 0.08, -0.45),
+		"offset": Vector3.ZERO
+	},
+	"machine_gun": {
+		"model_name": "MachineGun",
+		"scene": "res://assets/kenny_blaster_kit/MachineGun.fbx",
+		"grip_pos": Vector3(0.05, 0.03, -0.25),
+		"muzzle_pos": Vector3(0.0, 0.08, -0.45),
+		"offset": Vector3.ZERO
+	},
+	"burst_rifle": {
+		"model_name": "Rifile2",
+		"scene": "res://assets/kenny_blaster_kit/Rifile2.fbx",
+		"grip_pos": Vector3(0.05, 0.02, -0.20),
+		"muzzle_pos": Vector3(0.0, 0.07, -0.32),
+		"offset": Vector3.ZERO
+	},
+	"sniper_rifle": {
+		"model_name": "Sniper",
+		"scene": "res://assets/kenny_blaster_kit/Sniper.fbx",
+		"grip_pos": Vector3(0.05, 0.03, -0.30),
+		"muzzle_pos": Vector3(0.0, 0.06, -0.75),
+		"offset": Vector3(0.045, 0.0, -0.745)
+	},
+	"heavy_sniper": {
+		"model_name": "Sniper1",
+		"scene": "res://assets/kenny_blaster_kit/Sniper1.fbx",
+		"grip_pos": Vector3(0.05, 0.03, -0.30),
+		"muzzle_pos": Vector3(0.0, 0.06, -0.66),
+		"offset": Vector3.ZERO
+	}
+}
+
 
 func _enter_tree() -> void:
 	# Ensure node name determines multiplayer authority if it represents an int ID
@@ -34,9 +86,11 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	_update_authority()
 	_setup_visuals()
-	
-	if NetworkManager:
-		NetworkManager.player_connected.connect(_on_network_player_connected)
+	_apply_character_model()
+
+	var net = get_node_or_null("/root/NetworkManager")
+	if net:
+		net.player_connected.connect(_on_network_player_connected)
 
 	if weapon_manager:
 		weapon_manager.weapon_changed.connect(_on_weapon_changed)
@@ -48,71 +102,210 @@ func _ready() -> void:
 		call_deferred("_setup_local_player")
 
 
+func _apply_character_model() -> void:
+	var weyzero: Node3D = get_node_or_null("Visuals/WeyzeroCodes")
+	var ato: Node3D = get_node_or_null("Visuals/AtoCodes")
+	var is_ato := (character_model == "Ato Codes")
+
+	# Update WeyzeroCodes visibility and anims
+	if weyzero:
+		weyzero.visible = not is_ato
+		var w_tree: AnimationTree = weyzero.get_node_or_null("AnimationTree")
+		if w_tree:
+			w_tree.active = not is_ato
+		var w_ik: SkeletonIK3D = weyzero.get_node_or_null("Skeleton3D/LeftHandIK")
+		if w_ik and is_ato:
+			w_ik.stop()
+
+	# Update AtoCodes visibility and anims
+	if ato:
+		ato.visible = is_ato
+		var a_tree: AnimationTree = ato.get_node_or_null("AnimationTree")
+		if a_tree:
+			a_tree.active = is_ato
+		var a_ik: SkeletonIK3D = ato.get_node_or_null("Skeleton3D/LeftHandIK")
+		if a_ik and not is_ato:
+			a_ik.stop()
+
+	_current_active_char = ato if is_ato else weyzero
+	if not _current_active_char:
+		return
+
+	anim_tree = _current_active_char.get_node_or_null("AnimationTree")
+	if anim_tree:
+		anim_tree.active = true
+		call_deferred("_fetch_anim_playback")
+
+	left_hand_ik = _current_active_char.get_node_or_null("Skeleton3D/LeftHandIK")
+
+	# Setup modular weapon mounts on the active character
+	_setup_character_weapons(_current_active_char)
+	_update_active_weapon_visual()
+
+
+func _fetch_anim_playback() -> void:
+	if anim_tree:
+		anim_playback = anim_tree.get("parameters/locomotion/playback")
+
+
+func _setup_character_weapons(char_node: Node3D) -> void:
+	var bone_att: BoneAttachment3D = char_node.get_node_or_null("Skeleton3D/BoneAttachment3D")
+	if not bone_att:
+		return
+
+	# Hide any legacy standalone blaster-d node
+	var old_blaster = bone_att.get_node_or_null("blaster-d")
+	if old_blaster:
+		old_blaster.visible = false
+
+	# Ensure WeaponMount container exists under BoneAttachment3D
+	var mount: Node3D = bone_att.get_node_or_null("WeaponMount")
+	if not mount:
+		mount = Node3D.new()
+		mount.name = "WeaponMount"
+		mount.transform = HAND_MOUNT_TRANSFORM
+		bone_att.add_child(mount)
+
+	# Instantiate each modular weapon scene if not already present
+	for wid in WEAPON_CONFIGS:
+		var cfg: Dictionary = WEAPON_CONFIGS[wid]
+		var model_name: String = cfg["model_name"]
+		if not mount.has_node(model_name):
+			var scn: PackedScene = load(cfg["scene"])
+			if scn:
+				var w_node: Node3D = scn.instantiate()
+				w_node.name = model_name
+				w_node.position = cfg["offset"]
+				w_node.visible = false
+
+				# Add Grip Marker for LeftHandIK
+				var grip := Marker3D.new()
+				grip.name = "LeftHandGrip"
+				grip.position = cfg["grip_pos"]
+				w_node.add_child(grip)
+
+				# Add Muzzle Marker for Projectiles
+				var muzz := Marker3D.new()
+				muzz.name = "Muzzle"
+				muzz.position = cfg["muzzle_pos"]
+				w_node.add_child(muzz)
+
+				mount.add_child(w_node)
+
+
+func _update_active_weapon_visual() -> void:
+	if not _current_active_char:
+		return
+	var bone_att: BoneAttachment3D = _current_active_char.get_node_or_null("Skeleton3D/BoneAttachment3D")
+	if not bone_att:
+		return
+
+	var mount: Node3D = bone_att.get_node_or_null("WeaponMount")
+	if not mount:
+		_setup_character_weapons(_current_active_char)
+		mount = bone_att.get_node_or_null("WeaponMount")
+		if not mount:
+			return
+
+	var current_w := weapon_manager.get_current_weapon() if weapon_manager else null
+	var current_id := current_w.weapon_id if current_w else "rifle"
+	var active_cfg: Dictionary = WEAPON_CONFIGS.get(current_id, WEAPON_CONFIGS["rifle"])
+	var target_model_name: String = active_cfg["model_name"]
+
+	var active_weapon_node: Node3D = null
+	for child in mount.get_children():
+		if child is Node3D:
+			var match_model: bool = (child.name == target_model_name)
+			child.visible = match_model
+			if match_model:
+				active_weapon_node = child
+
+	if active_weapon_node:
+		muzzle = active_weapon_node.get_node_or_null("Muzzle")
+		var grip = active_weapon_node.get_node_or_null("LeftHandGrip")
+		if left_hand_ik and grip:
+			left_hand_ik.target_node = NodePath("../BoneAttachment3D/WeaponMount/" + target_model_name + "/LeftHandGrip")
+			if is_inside_tree() and left_hand_ik.is_inside_tree():
+				left_hand_ik.start()
+
+
 func _setup_local_player() -> void:
 	if not is_inside_tree():
 		return
 	var tree := get_tree()
 	if not tree or not tree.root:
 		return
-	var lobby_menu := tree.root.find_child("LobbyMenu", true, false) as LobbyMenu
-	if lobby_menu and weapon_manager:
+	var lobby_menu: Node = tree.root.find_child("LobbyMenu", true, false)
+	if lobby_menu and weapon_manager and lobby_menu.has_method("hook_local_player_weapon"):
 		lobby_menu.hook_local_player_weapon(weapon_manager)
 
 
 func _update_authority() -> void:
-	# Pass authority down to components where needed
 	if synchronizer:
 		synchronizer.set_multiplayer_authority(peer_id)
 
 
 func _setup_visuals() -> void:
-	# Set player nametag to the real chosen player name
-	var player_name := NetworkManager.get_player_name(peer_id)
+	if not is_inside_tree():
+		return
+	var net = get_node_or_null("/root/NetworkManager")
+	var player_name: String = net.get_player_name(peer_id) if net else ("Player %d" % peer_id)
 	if nametag_label:
 		nametag_label.text = player_name
 
-	# Apply a distinctive color based on peer_id
-	if mesh_instance:
-		var mat = StandardMaterial3D.new()
-		var hue = fmod(float(peer_id) * 0.381966, 1.0) # Golden ratio distribution for pleasant distinct colors
-		mat.albedo_color = Color.from_hsv(hue, 0.75, 0.95)
-		mesh_instance.material_override = mat
-
 
 func _on_network_player_connected(connected_id: int, _info: Dictionary) -> void:
-	if connected_id == peer_id and nametag_label:
-		nametag_label.text = NetworkManager.get_player_name(peer_id)
+	if not is_inside_tree():
+		return
+	var net = get_node_or_null("/root/NetworkManager")
+	if connected_id == peer_id and nametag_label and net:
+		nametag_label.text = net.get_player_name(peer_id)
 
 
 func _on_weapon_changed(w: WeaponData) -> void:
 	if not w:
 		return
-	if energy_core:
-		var mat := StandardMaterial3D.new()
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		mat.albedo_color = w.bullet_color
-		energy_core.material_override = mat
+	_update_active_weapon_visual()
 
 
 func _physics_process(delta: float) -> void:
-	if not multiplayer.has_multiplayer_peer():
-		return
-	# Only the player authority simulates local physics and movement
-	if is_multiplayer_authority():
+	var has_net := multiplayer.has_multiplayer_peer()
+	# Only the local authority (or standalone test without net) simulates physics
+	if not has_net or is_multiplayer_authority():
 		movement_component.process_movement(delta, camera_pivot.get_yaw_basis())
-		_update_weapon_aim(delta)
 		if input_component and input_component.is_firing:
 			_shoot()
 
+	# Synchronize animation states for all peers (local + remote replica display)
+	_update_animation_state(delta)
 
-func _update_weapon_aim(delta: float) -> void:
-	if not weapon_mount or not camera_pivot:
+
+func _update_animation_state(_delta: float) -> void:
+	if not anim_playback:
 		return
-	var aim_target := camera_pivot.get_aim_point(100.0)
-	var weapon_pos := weapon_mount.global_position
-	if weapon_pos.distance_squared_to(aim_target) > 0.25:
-		var target_transform := weapon_mount.global_transform.looking_at(aim_target, Vector3.UP)
-		weapon_mount.global_transform = weapon_mount.global_transform.interpolate_with(target_transform, minf(delta * 25.0, 1.0))
+
+	# In-air / jumping has highest priority
+	if not is_on_floor():
+		anim_playback.travel("Jump")
+		return
+
+	var is_moving := false
+	var is_sprinting := false
+
+	if is_multiplayer_authority() and input_component:
+		is_moving = input_component.move_direction.length_squared() > 0.01
+		is_sprinting = is_moving and input_component.is_sprinting
+	else:
+		var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+		is_moving = horizontal_speed > 0.3
+		is_sprinting = horizontal_speed > 7.0
+
+	if is_sprinting:
+		anim_playback.travel("Run")
+	elif is_moving:
+		anim_playback.travel("Walk")
+	else:
+		anim_playback.travel("Idle")
 
 
 func _shoot() -> void:
@@ -125,23 +318,58 @@ func _shoot() -> void:
 		if not fired_weapon:
 			return
 
-	var aim_point: Vector3 = camera_pivot.get_aim_point(150.0)
+	if fired_weapon.burst_count > 1:
+		_fire_burst(fired_weapon)
+	else:
+		_execute_single_shot(fired_weapon)
+
+
+func _fire_burst(w: WeaponData) -> void:
+	for i in range(w.burst_count):
+		if not is_instance_valid(self) or not is_inside_tree():
+			return
+		_execute_single_shot(w)
+		if i < w.burst_count - 1:
+			await get_tree().create_timer(w.burst_interval).timeout
+
+
+func _execute_single_shot(fired_weapon: WeaponData) -> void:
+	if anim_tree:
+		anim_tree.set("parameters/shoot_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+	var base_aim_point: Vector3 = camera_pivot.get_aim_point(150.0)
 	var shoot_origin: Vector3 = (
-		muzzle.global_position if muzzle
+		muzzle.global_position if muzzle and is_instance_valid(muzzle)
 		else (global_position + global_transform.basis * Vector3(0.36, 0.88, -0.6))
 	)
-	
-	# Spawn bullet projectile directly aligned with crosshair aim target
-	_spawn_bullet(shoot_origin, aim_point, fired_weapon)
+
+	# Apply spread if configured on weapon
+	var final_aim_point := base_aim_point
+	if fired_weapon and fired_weapon.spread_degrees > 0.0:
+		var dist = shoot_origin.distance_to(base_aim_point)
+		var spread_rad = deg_to_rad(fired_weapon.spread_degrees)
+		var spread_offset = Vector3(
+			randf_range(-1.0, 1.0),
+			randf_range(-1.0, 1.0),
+			0.0
+		).normalized() * tan(spread_rad) * dist * randf_range(0.2, 1.0)
+		final_aim_point += camera_pivot.global_transform.basis * spread_offset
+
+	# Spawn bullet projectile directly aligned with target
+	_spawn_bullet(shoot_origin, final_aim_point, fired_weapon)
 
 	# Audio feedback
 	_play_shoot_sound(fired_weapon)
 
-	# Recoil animation on weapon mount
-	if weapon_mount:
-		var tw := create_tween()
-		tw.tween_property(weapon_mount, "position:z", -0.18, 0.04)
-		tw.tween_property(weapon_mount, "position:z", -0.25, 0.08)
+	# Weapon recoil impulse
+	if _current_active_char:
+		var bone_att = _current_active_char.get_node_or_null("Skeleton3D/BoneAttachment3D")
+		var mount = bone_att.get_node_or_null("WeaponMount") if bone_att else null
+		if mount:
+			var tw := create_tween()
+			var kick_dist := 0.08 if (fired_weapon and fired_weapon.shoot_type == "BOLT ACTION") else 0.035
+			tw.tween_property(mount, "position:z", HAND_MOUNT_TRANSFORM.origin.z - kick_dist, 0.03)
+			tw.tween_property(mount, "position:z", HAND_MOUNT_TRANSFORM.origin.z, 0.08)
 
 
 func _spawn_bullet(from_pos: Vector3, to_pos: Vector3, weapon: WeaponData = null) -> void:
@@ -163,3 +391,22 @@ func _play_shoot_sound(weapon: WeaponData = null) -> void:
 	add_child(sfx)
 	sfx.play()
 	sfx.finished.connect(sfx.queue_free)
+
+
+func notify_pickup(w: WeaponData) -> void:
+	var tree := get_tree()
+	if not tree or not tree.root:
+		return
+	var lobby_menu: Node = tree.root.find_child("LobbyMenu", true, false)
+	if lobby_menu and lobby_menu.has_method("show_pickup_notification"):
+		lobby_menu.show_pickup_notification(w)
+
+
+## Toggle Left Hand IK for two-handed weapons vs one-handed / holstered
+func set_left_hand_ik_active(active: bool) -> void:
+	if not left_hand_ik:
+		return
+	if active:
+		left_hand_ik.start()
+	else:
+		left_hand_ik.stop()

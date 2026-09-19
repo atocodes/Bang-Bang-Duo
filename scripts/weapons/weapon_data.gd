@@ -6,15 +6,20 @@ extends Resource
 
 @export var weapon_id: String = "pulse_blaster"
 @export var weapon_name: String = "PULSE BLASTER"
+@export var shoot_type: String = "FULL AUTO"
 @export var max_ammo: int = 30
 @export var current_ammo: int = 30
 @export var reserve_ammo: int = 120
 @export var is_infinite: bool = false
 @export var fire_rate: float = 0.16
+@export var burst_count: int = 1
+@export var burst_interval: float = 0.06
+@export var spread_degrees: float = 0.0
 @export var bullet_speed: float = 95.0
 @export var damage: float = 25.0
 @export var bullet_color: Color = Color(0.0, 1.0, 0.95)
 @export var sfx_pitch: float = 1.3
+@export var model_name: String = "Rifile"
 
 func can_shoot() -> bool:
 	return is_infinite or current_ammo > 0

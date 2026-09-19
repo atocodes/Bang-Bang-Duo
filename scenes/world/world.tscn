@@ -1,6 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/world.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/weapon_pickup.tscn" id="2_pickup"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.384314, 0.454902, 0.54902, 1)
@@ -120,3 +121,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -6)
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://scenes/player/player.tscn")
 spawn_path = NodePath("../Players")
+
+[node name="WeaponPickups" type="Node3D" parent="."]
+
+[node name="Pickup_Rifle" parent="WeaponPickups" instance=ExtResource("2_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+weapon_id = "rifle"
+
+[node name="Pickup_MachineGun" parent="WeaponPickups" instance=ExtResource("2_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 8)
+weapon_id = "machine_gun"
+
+[node name="Pickup_BurstRifle" parent="WeaponPickups" instance=ExtResource("2_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -8)
+weapon_id = "burst_rifle"
+
+[node name="Pickup_Sniper" parent="WeaponPickups" instance=ExtResource("2_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 3, -8)
+weapon_id = "sniper_rifle"
+
+[node name="Pickup_HeavySniper" parent="WeaponPickups" instance=ExtResource("2_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
+weapon_id = "heavy_sniper"
