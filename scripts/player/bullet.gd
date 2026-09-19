@@ -67,7 +67,9 @@ func _physics_process(delta: float) -> void:
 		if collider and collider.has_method("take_damage"):
 			collider.take_damage(damage, shooter_peer_id, direction, hit.position)
 			if CodeLogicBus:
-				CodeLogicBus.trace_exec("BALLISTICS", "raycast_hit(Player)", "target:%s | dmg:%.1f" % [str(collider.name), damage], "#f87171")
+				CodeLogicBus.trace_edu("COLLISION:RAYCAST", "INTERSECT QUERY", "intersect_ray(pos, next_pos)", "hit:Player(%s) ➜ dmg:%.0f" % [str(collider.name), damage], "#f87171")
+		elif CodeLogicBus:
+			CodeLogicBus.trace_edu("COLLISION:RAYCAST", "WORLD GEOMETRY", "intersect_ray(mask:1|2)", "hit at (%.1f, %.1f, %.1f)" % [hit.position.x, hit.position.y, hit.position.z], "#38bdf8")
 		_impact(hit.position, hit.normal)
 		return
 

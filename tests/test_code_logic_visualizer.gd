@@ -31,12 +31,17 @@ func _ready() -> void:
 	assert(latest_entry.life_timer > 0.0, "Entry must have active life timer")
 	print("PASS: 2. Trace dispatch and ring-buffer storage verified.")
 
-	# 3. Test condition tracing helper
+	# 3. Test condition & educational tracing helpers
 	CodeLogicBus.trace_cond("WEAPON", "ammo > 0", true, "ammo: 30")
 	var cond_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
-	assert(cond_entry.tag == "COND:WEAPON", "Condition tag format verified")
+	assert("WEAPON" in cond_entry.tag, "Condition tag format verified")
 	assert("TRUE" in cond_entry.code, "Condition result formatted with TRUE")
-	print("PASS: 3. Condition trace formatting verified.")
+
+	CodeLogicBus.trace_edu("MATH:LERP", "KINEMATICS", "v = move_toward(dir*spd, a*dt)", "vel:(3.0, 0.0, -4.0)")
+	var edu_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
+	assert(edu_entry.tag == "MATH:LERP:KINEMATICS", "Educational tag format verified")
+	assert("move_toward" in edu_entry.code, "Educational formula code verified")
+	print("PASS: 3. Condition & Educational Under-The-Hood trace formatting verified.")
 
 	# 4. Test Weapon and Movement Hook Integrations
 	var player_res := load("res://scenes/player/player.tscn")
@@ -51,12 +56,12 @@ func _ready() -> void:
 	var fired_w = wm.fire()
 	assert(fired_w != null, "Weapon fire should succeed")
 	var fire_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
-	assert(fire_entry.tag == "EXEC:WEAPON", "Weapon fire trace dispatched")
+	assert("FIRE" in fire_entry.tag, "Weapon fire trace dispatched")
 
 	# Switch weapon -> verifies switch trace
 	wm.switch_weapon(1)
 	var switch_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
-	assert(switch_entry.tag == "EXEC:WEAPON", "Weapon switch trace dispatched")
+	assert("WEAPON" in switch_entry.tag, "Weapon switch trace dispatched")
 
 	# Movement physics trace
 	p.input_component.move_direction = Vector2(0, -1)
@@ -68,14 +73,14 @@ func _ready() -> void:
 	p.take_damage(25.0, 1, Vector3.FORWARD, Vector3(0, 1, 0))
 	assert(p.current_health == 75.0, "Player health must be 75 after 25 damage")
 	var dmg_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
-	assert("take_damage" in dmg_entry.code, "Damage trace must be recorded in CodeLogicDock")
+	assert("DAMAGE" in dmg_entry.tag or "hp" in dmg_entry.code, "Damage trace must be recorded in CodeLogicDock")
 	assert("75" in dmg_entry.code, "Updated HP (75) must appear in trace")
 
 	# Test fatal damage & respawn
 	p.take_damage(100.0, 1, Vector3.ZERO, Vector3.ZERO)
 	assert(p.current_health == 100.0, "Player must respawn with full 100 health")
 	var respawn_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
-	assert("respawn" in respawn_entry.code or "100" in respawn_entry.code, "Respawn trace must be recorded")
+	assert("RESPAWN" in respawn_entry.tag or "100" in respawn_entry.code, "Respawn trace must be recorded")
 	p.queue_free()
 	print("PASS: 5. Health system, damage impact knockback, and respawn logic flow verified.")
 

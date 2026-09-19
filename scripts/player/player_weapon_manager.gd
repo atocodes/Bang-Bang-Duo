@@ -141,7 +141,7 @@ func switch_weapon(index: int) -> void:
 	weapon_changed.emit(cur)
 	ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
 	if CodeLogicBus and cur:
-		CodeLogicBus.trace_exec("WEAPON", "switch_weapon(slot:%d)" % index, "equipped:'%s' | ammo:%d/%d" % [cur.weapon_name, cur.current_ammo, cur.reserve_ammo], "#a78bfa")
+		CodeLogicBus.trace_edu("STATE:WEAPON", "INVENTORY SLOT", "active_slot = %d" % index, "equipped:'%s' ➜ dmg:%.0f | rate:%.2fs" % [cur.weapon_name, cur.damage, cur.fire_rate], "#a78bfa")
 
 
 func cycle_weapon(delta: int) -> void:
@@ -149,7 +149,7 @@ func cycle_weapon(delta: int) -> void:
 		return
 	var new_index = posmod(current_index + delta, weapons.size())
 	if CodeLogicBus:
-		CodeLogicBus.trace_exec("WEAPON", "cycle_weapon(%+d)" % delta, "slot:%d -> %d" % [current_index, new_index], "#a78bfa")
+		CodeLogicBus.trace_edu("MATH:MODULO", "CIRCULAR INDEX", "idx = posmod(cur %+d, %d)" % [delta, weapons.size()], "slot:%d ➜ %d" % [current_index, new_index], "#a78bfa")
 	switch_weapon(new_index)
 
 
@@ -175,7 +175,7 @@ func fire() -> WeaponData:
 	weapon_fired.emit(cur)
 	ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
 	if CodeLogicBus:
-		CodeLogicBus.trace_exec("WEAPON", "fire('%s')" % cur.weapon_name, "ammo:%d/%d | cd:%.2fs" % [cur.current_ammo, cur.reserve_ammo, cur.fire_rate], "#34d399")
+		CodeLogicBus.trace_edu("GAME-LOOP:FIRE", "COOLDOWN & AMMO", "cd = %.2fs; ammo -= 1" % cur.fire_rate, "'%s' ➜ ammo:%d/%d" % [cur.weapon_name, cur.current_ammo, cur.reserve_ammo], "#34d399")
 	return cur
 
 
@@ -227,6 +227,6 @@ func reload_current() -> void:
 	if reloaded:
 		ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
 		if CodeLogicBus:
-			CodeLogicBus.trace_exec("WEAPON", "reload_current('%s')" % cur.weapon_name, "ammo:%d/%d [RELOADED]" % [cur.current_ammo, cur.reserve_ammo], "#fbbf24")
+			CodeLogicBus.trace_edu("GAME-LOOP:RELOAD", "AMMO TRANSFER", "reserve -= needed (cur = max)", "'%s' ➜ ammo:%d/%d [RELOADED]" % [cur.weapon_name, cur.current_ammo, cur.reserve_ammo], "#fbbf24")
 	elif CodeLogicBus:
 		CodeLogicBus.trace_cond("WEAPON", "reload('%s')" % cur.weapon_name, false, "full_or_empty_reserve")

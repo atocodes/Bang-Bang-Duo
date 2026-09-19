@@ -369,17 +369,17 @@ func apply_hit_rpc(amount: float, attacker_id: int, hit_dir: Vector3, hit_pos: V
 		var impulse := hit_dir.normalized() * (amount * 0.35) + Vector3(0, 1.8, 0)
 		velocity += impulse
 		if is_multiplayer_authority() and CodeLogicBus:
-			CodeLogicBus.trace_exec("PHYSICS", "apply_knockback()", "impulse:(%.1f, %.1f, %.1f) | vel:(%.1f, %.1f, %.1f)" % [
+			CodeLogicBus.trace_edu("MATH:IMPULSE", "VECTOR MOMENTUM", "I = dir * (dmg * 0.35) + (0, 1.8, 0)", "impulse:(%.1f, %.1f, %.1f) ➜ vel:(%.1f, %.1f, %.1f)" % [
 				impulse.x, impulse.y, impulse.z, velocity.x, velocity.y, velocity.z
 			], "#c084fc")
 
 	# 2. Visual & Audio Hit Feedback on all peers
 	_play_hit_feedback(hit_pos, hit_dir)
 
-	# 3. Stream to Code Logic Visualizer
+	# 3. Stream to Educational Code Logic Visualizer
 	if CodeLogicBus:
 		var status_str := "ALIVE" if current_health > 0.0 else "DEAD"
-		CodeLogicBus.trace_cond("COMBAT", "take_damage(%.1f, attacker:%d)" % [amount, attacker_id], true, "hp:%.0f->%.0f [%s]" % [old_hp, current_health, status_str])
+		CodeLogicBus.trace_edu("COMBAT:DAMAGE", "HEALTH ARITHMETIC", "hp = max(0, hp - %.1f)" % amount, "hp:%.0f ➜ %.0f [%s]" % [old_hp, current_health, status_str], "#f87171")
 
 	# 4. Death and Respawn Handling
 	if current_health <= 0.0:
@@ -431,7 +431,7 @@ func respawn_rpc(spawn_pos: Vector3) -> void:
 	_update_nametag_display()
 	health_changed.emit(current_health, max_health)
 	if CodeLogicBus:
-		CodeLogicBus.trace_exec("RESPAWN", "respawn_rpc()", "pos:(%.1f, %.1f, %.1f) | hp:100/100" % [
+		CodeLogicBus.trace_edu("GAME-LOOP", "RESPAWN CYCLE", "hp = max_hp; pos = spawn_point", "pos:(%.1f, %.1f, %.1f) ➜ hp:100/100" % [
 			spawn_pos.x, spawn_pos.y, spawn_pos.z
 		], "#34d399")
 

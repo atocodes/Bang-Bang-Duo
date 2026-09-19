@@ -32,14 +32,14 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="StatusHeader" type="Label" parent="MarginContainer/HeaderRow"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 0.55)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_font_sizes/font_size = 11
-text = "✦ LIVE GDScript LOGIC & CONDITION STREAM ✦"
+	[node name="StatusHeader" type="Label" parent="MarginContainer/HeaderRow"]
+	layout_mode = 2
+	theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 0.65)
+	theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+	theme_override_constants/shadow_offset_x = 1
+	theme_override_constants/shadow_offset_y = 1
+	theme_override_font_sizes/font_size = 11
+	text = "⚙ GDScript UNDER-THE-HOOD DECONSTRUCTOR [LIVE MATH & ARCHITECTURE]"
 
 [node name="ToggleHint" type="Label" parent="MarginContainer/HeaderRow"]
 layout_mode = 2

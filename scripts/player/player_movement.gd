@@ -40,9 +40,9 @@ func process_movement(delta: float, look_yaw_basis: Basis) -> void:
 		if can_jump:
 			current_velocity.y = jump_velocity
 			if CodeLogicBus:
-				CodeLogicBus.trace_cond("PHYSICS", "is_jumping and is_on_floor()", true, "velocity.y = %.1f" % jump_velocity)
+				CodeLogicBus.trace_edu("PHYSICS:JUMP", "IMPULSE", "v_y = jump_vel (%.1fm/s)" % jump_velocity, "is_on_floor() ➜ velocity.y:%.1f" % jump_velocity, "#38bdf8")
 		elif not was_on_floor and CodeLogicBus:
-			CodeLogicBus.trace_cond("PHYSICS", "is_jumping and is_on_floor()", false, "in_air (can_jump=false)")
+			CodeLogicBus.trace_cond("PHYSICS:JUMP", "is_jumping and is_on_floor()", false, "in_air (can_jump=false)")
 
 	# Determine target speed
 	var is_sprint: bool = input_component.is_sprinting

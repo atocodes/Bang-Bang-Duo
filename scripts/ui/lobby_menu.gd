@@ -62,6 +62,9 @@ extends Control
 @onready var hud_player_name: Label = $HUD/TopLeftCard/Panel/VBox/PlayerNameLabel
 @onready var hud_role_badge: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/RoleBadge
 @onready var hud_active_players: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/ActivePlayers
+@onready var hud_health_bar: ProgressBar = get_node_or_null("HUD/TopLeftCard/Panel/VBox/HealthRow/HealthBar")
+@onready var hud_health_label: Label = get_node_or_null("HUD/TopLeftCard/Panel/VBox/HealthRow/HealthLabel")
+@onready var hud_opponent_radar: Label = get_node_or_null("HUD/TopLeftCard/Panel/VBox/OpponentStatusRow/OpponentRadarLabel")
 @onready var disconnect_button: Button = $HUD/TopRightCard/DisconnectButton
 @onready var hud_weapon_name: Label = $HUD/BottomRightCard/Panel/VBox/WeaponNameLabel
 @onready var hud_shoot_type: Label = get_node_or_null("HUD/BottomRightCard/Panel/VBox/ShootTypeLabel")
@@ -353,9 +356,13 @@ func hook_local_player(p: Player) -> void:
 
 
 func _on_player_health_changed(cur_hp: float, max_hp: float) -> void:
-	if hud_player_name:
-		var base_name := NetworkManager.local_player_name
-		hud_player_name.text = "%s [HP: %d/%d]" % [base_name, int(cur_hp), int(max_hp)]
+	if hud_health_bar:
+		hud_health_bar.max_value = max_hp
+		hud_health_bar.value = cur_hp
+	if hud_health_label:
+		hud_health_label.text = "%d / %d" % [int(cur_hp), int(max_hp)]
+		var hp_pct := cur_hp / maxf(1.0, max_hp)
+		hud_health_label.modulate = Color(0.2, 1.0, 0.5) if hp_pct > 0.55 else (Color(1.0, 0.75, 0.2) if hp_pct > 0.25 else Color(1.0, 0.3, 0.3))
 
 
 func hook_local_player_weapon(wm: PlayerWeaponManager) -> void:
@@ -519,6 +526,22 @@ func _update_player_hud(_id: int = 0, _info: Dictionary = {}) -> void:
 		if count == 0 and multiplayer.multiplayer_peer:
 			count = 1
 		hud_active_players.text = "PLAYERS: %d" % count
+	
+	# Update Creative Duo / Opponent Radar
+	if hud_opponent_radar:
+		var other_peers: Array = []
+		for pid in NetworkManager.players:
+			if pid != my_id:
+				other_peers.append(pid)
+		
+		if not other_peers.is_empty():
+			var opp_id: int = other_peers[0]
+			var opp_name: String = NetworkManager.get_player_name(opp_id)
+			hud_opponent_radar.text = "✦ DUO TARGET: %s [VITAL: ONLINE • COMBAT READY] ✦" % opp_name
+			hud_opponent_radar.modulate = Color(0.2, 1.0, 0.5)
+		else:
+			hud_opponent_radar.text = "✦ RADAR: 1 SOLO PLAYER • WAITING FOR DUO ✦"
+			hud_opponent_radar.modulate = Color(0.9, 0.75, 0.2)
 
 
 ## Controls screen visibility and strict Voxide lifecycle between Main Menu and Gameplay.

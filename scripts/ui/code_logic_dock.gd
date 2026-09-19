@@ -52,7 +52,7 @@ func _ready() -> void:
 		CodeLogicBus.is_enabled = true
 
 	# Initial banner trace
-	CodeLogicBus.trace("INIT", "CodeLogicEngine.start() -> transparent_logic_stream: [color=#34d399]ONLINE[/color]", "SYS", "#38bdf8")
+	CodeLogicBus.trace("ENGINE", "Godot 4.7 GDScript Deconstructor [color=#34d399]READY[/color] • Live Math, Physics & Netcode breakdown", "SYS", "#38bdf8")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -107,7 +107,6 @@ func _process(delta: float) -> void:
 	if not _is_dock_visible:
 		return
 
-	var needs_render := false
 	for i in range(MAX_VISIBLE_LINES):
 		var entry := _entries[i]
 		if entry.is_active:
@@ -121,7 +120,6 @@ func _process(delta: float) -> void:
 				lbl.modulate.a = entry.life_timer / 0.8
 			else:
 				lbl.modulate.a = 0.95
-			needs_render = true
 
 
 func _update_labels() -> void:
@@ -129,7 +127,7 @@ func _update_labels() -> void:
 		var entry := _entries[i]
 		var lbl := _pool_labels[i]
 		if entry.is_active:
-			var formatted := "[color=#64748b]%s[/color] [color=%s][b][%s][/b][/color] %s" % [
+			var formatted := "[color=#475569]%s[/color] [color=%s][b]⟨%s⟩[/b][/color] %s" % [
 				entry.timestamp_str,
 				entry.color_hex,
 				entry.tag,

@@ -845,6 +845,44 @@ theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 20
 text = "PLAYERS: 1"
 
+[node name="HealthRow" type="HBoxContainer" parent="HUD/TopLeftCard/Panel/VBox" unique_id=987213456]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HealthTag" type="Label" parent="HUD/TopLeftCard/Panel/VBox/HealthRow" unique_id=987213457]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_font_sizes/font_size = 18
+text = "HEALTH"
+
+[node name="HealthBar" type="ProgressBar" parent="HUD/TopLeftCard/Panel/VBox/HealthRow" unique_id=987213458]
+custom_minimum_size = Vector2(120, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="HealthLabel" type="Label" parent="HUD/TopLeftCard/Panel/VBox/HealthRow" unique_id=987213459]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_font_sizes/font_size = 18
+text = "100 / 100"
+
+[node name="OpponentStatusRow" type="HBoxContainer" parent="HUD/TopLeftCard/Panel/VBox" unique_id=987213460]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="OpponentRadarLabel" type="Label" parent="HUD/TopLeftCard/Panel/VBox/OpponentStatusRow" unique_id=987213461]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.2, 0.95)
+theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_font_sizes/font_size = 17
+text = "✦ RADAR: WAITING FOR DUO ENEMY ✦"
+
 [node name="TopRightCard" type="MarginContainer" parent="HUD" unique_id=389530262]
 layout_mode = 1
 anchors_preset = 1
