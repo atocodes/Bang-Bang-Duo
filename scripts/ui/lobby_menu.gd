@@ -61,6 +61,7 @@ extends Control
 @onready var disconnect_button: Button = $HUD/TopRightCard/DisconnectButton
 @onready var hud_weapon_name: Label = $HUD/BottomRightCard/Panel/VBox/WeaponNameLabel
 @onready var hud_shoot_type: Label = get_node_or_null("HUD/BottomRightCard/Panel/VBox/ShootTypeLabel")
+@onready var hud_ammo_tag: Label = get_node_or_null("HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoTag")
 @onready var hud_ammo_current: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoCurrentLabel
 @onready var hud_ammo_reserve: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoReserveLabel
 @onready var pickup_toast: Label = get_node_or_null("HUD/PickupToast")
@@ -342,29 +343,85 @@ func hook_local_player_weapon(wm: PlayerWeaponManager) -> void:
 			_hooked_weapon_manager.weapon_changed.disconnect(_on_weapon_changed)
 		if _hooked_weapon_manager.ammo_changed.is_connected(_on_ammo_changed):
 			_hooked_weapon_manager.ammo_changed.disconnect(_on_ammo_changed)
+		if _hooked_weapon_manager.reload_started.is_connected(_on_reload_started):
+			_hooked_weapon_manager.reload_started.disconnect(_on_reload_started)
+		if _hooked_weapon_manager.reload_completed.is_connected(_on_reload_completed):
+			_hooked_weapon_manager.reload_completed.disconnect(_on_reload_completed)
+		if _hooked_weapon_manager.reload_cancelled.is_connected(_on_reload_cancelled):
+			_hooked_weapon_manager.reload_cancelled.disconnect(_on_reload_cancelled)
 	
 	_hooked_weapon_manager = wm
 	if not wm:
+		_on_weapon_changed(null)
 		return
 	
 	wm.weapon_changed.connect(_on_weapon_changed)
 	wm.ammo_changed.connect(_on_ammo_changed)
+	wm.reload_started.connect(_on_reload_started)
+	wm.reload_completed.connect(_on_reload_completed)
+	wm.reload_cancelled.connect(_on_reload_cancelled)
 	
 	var cur := wm.get_current_weapon()
+	_on_weapon_changed(cur)
 	if cur:
-		_on_weapon_changed(cur)
 		_on_ammo_changed(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+	else:
+		_on_ammo_changed(0, 0, false)
 
 
 func _on_weapon_changed(w: WeaponData) -> void:
 	if not w:
+		if hud_weapon_name:
+			hud_weapon_name.text = "UNARMED"
+			hud_weapon_name.modulate = Color(0.65, 0.75, 0.88, 0.8)
+		if hud_shoot_type:
+			hud_shoot_type.text = ""
+		if hud_ammo_tag:
+			hud_ammo_tag.text = ""
+		if hud_ammo_current:
+			hud_ammo_current.text = ""
+		if hud_ammo_reserve:
+			hud_ammo_reserve.text = ""
 		return
+
 	if hud_weapon_name:
 		hud_weapon_name.text = w.weapon_name
 		hud_weapon_name.modulate = w.bullet_color
 	if hud_shoot_type:
 		hud_shoot_type.text = "[%s]" % w.shoot_type
 		hud_shoot_type.modulate = w.bullet_color.lerp(Color.WHITE, 0.25)
+	if hud_ammo_tag:
+		hud_ammo_tag.text = "AMMO"
+	
+	if _hooked_weapon_manager and _hooked_weapon_manager.is_reloading:
+		if hud_ammo_current:
+			hud_ammo_current.text = "RELOAD"
+	else:
+		_on_ammo_changed(w.current_ammo, w.reserve_ammo, w.is_infinite)
+
+
+func _on_reload_started(w: WeaponData, _duration: float) -> void:
+	if hud_shoot_type and w:
+		hud_shoot_type.text = "[RELOADING...]"
+		hud_shoot_type.modulate = Color(1.0, 0.85, 0.2)
+	if hud_ammo_current:
+		hud_ammo_current.text = "RELOAD"
+
+
+func _on_reload_completed(w: WeaponData) -> void:
+	if w and hud_shoot_type:
+		hud_shoot_type.text = "[%s]" % w.shoot_type
+		hud_shoot_type.modulate = w.bullet_color.lerp(Color.WHITE, 0.25)
+	if w:
+		_on_ammo_changed(w.current_ammo, w.reserve_ammo, w.is_infinite)
+
+
+func _on_reload_cancelled(w: WeaponData) -> void:
+	if w and hud_shoot_type:
+		hud_shoot_type.text = "[%s]" % w.shoot_type
+		hud_shoot_type.modulate = w.bullet_color.lerp(Color.WHITE, 0.25)
+	if w:
+		_on_ammo_changed(w.current_ammo, w.reserve_ammo, w.is_infinite)
 
 
 func show_pickup_notification(w: WeaponData) -> void:
@@ -385,6 +442,18 @@ func show_pickup_notification(w: WeaponData) -> void:
 
 
 func _on_ammo_changed(cur: int, reserve: int, is_infinite: bool) -> void:
+	var cur_w := _hooked_weapon_manager.get_current_weapon() if _hooked_weapon_manager else null
+	if not cur_w:
+		if hud_ammo_tag:
+			hud_ammo_tag.text = ""
+		if hud_ammo_current:
+			hud_ammo_current.text = ""
+		if hud_ammo_reserve:
+			hud_ammo_reserve.text = ""
+		return
+
+	if hud_ammo_tag:
+		hud_ammo_tag.text = "AMMO"
 	if hud_ammo_current:
 		hud_ammo_current.text = "INF" if is_infinite else str(cur)
 	if hud_ammo_reserve:

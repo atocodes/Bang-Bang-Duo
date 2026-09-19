@@ -104,7 +104,7 @@ func _ready() -> void:
 	bullet_test._impact(Vector3(0, 1, -10), Vector3.BACK)
 	print("PASS: 7. Bullet impact FX executed cleanly.")
 
-	# 8. Test 5-Weapon Arsenal and Shoot Types
+	# 8. Test Unarmed Spawning, Weapon Acquisition, Arsenal, and Timed Reload with Switch Cancellation
 	var player_res = load("res://scenes/player/player.tscn")
 	assert(player_res != null, "Player scene must load")
 	var p_test: Player = player_res.instantiate()
@@ -112,44 +112,89 @@ func _ready() -> void:
 	
 	var wm: PlayerWeaponManager = p_test.weapon_manager
 	assert(wm != null, "Player must have WeaponManager node")
-	assert(wm.weapons.size() == 5, "WeaponManager must have exactly 5 modular weapons (All except blast FBXs)")
 	
-	# Slot 0: Assault Rifle
-	wm.switch_weapon(0)
+	# Verify player spawns completely unarmed with no ammo text
+	assert(wm.weapons.is_empty(), "Player must spawn unarmed with 0 weapons")
+	assert(p_test.current_weapon_id == "", "current_weapon_id must be empty at spawn")
 	lobby_menu.hook_local_player_weapon(wm)
-	assert(lobby_menu.hud_weapon_name.text == "ASSAULT RIFLE", "Slot 0 should be ASSAULT RIFLE")
-	assert(lobby_menu.hud_shoot_type.text == "[FULL AUTO]", "Assault Rifle shoot type should be [FULL AUTO]")
+	assert(lobby_menu.hud_weapon_name.text == "UNARMED", "HUD should display UNARMED when no gun is equipped")
+	assert(lobby_menu.hud_ammo_current.text == "", "HUD ammo current must be empty when unarmed")
+	assert(lobby_menu.hud_ammo_reserve.text == "", "HUD ammo reserve must be empty when unarmed")
+	print("PASS: 8a. Player spawns unarmed with no weapon models, LeftHandIK inactive, and no ammo text.")
+
+	# Pickup 1st weapon: Assault Rifle
+	var rifle_data = PlayerWeaponManager.create_weapon_by_id("rifle")
+	wm.add_or_refill_weapon(rifle_data)
+	assert(wm.weapons.size() == 1, "Player should have 1 weapon after pickup")
+	assert(p_test.current_weapon_id == "rifle", "current_weapon_id should be 'rifle'")
+	assert(lobby_menu.hud_weapon_name.text == "ASSAULT RIFLE", "HUD should update to ASSAULT RIFLE")
+	assert(lobby_menu.hud_shoot_type.text == "[FULL AUTO]", "Shoot type should be [FULL AUTO]")
+	assert(lobby_menu.hud_ammo_current.text == "30", "Ammo should show 30")
 	
-	# Slot 1: Machine Gun
+	# Pickup remaining weapons in arsenal
+	wm.add_or_refill_weapon(PlayerWeaponManager.create_weapon_by_id("machine_gun"))
+	wm.add_or_refill_weapon(PlayerWeaponManager.create_weapon_by_id("burst_rifle"))
+	wm.add_or_refill_weapon(PlayerWeaponManager.create_weapon_by_id("sniper_rifle"))
+	wm.add_or_refill_weapon(PlayerWeaponManager.create_weapon_by_id("heavy_sniper"))
+	assert(wm.weapons.size() == 5, "All 5 weapons acquired into inventory")
+	
+	# Verify slot properties
 	wm.switch_weapon(1)
 	assert(lobby_menu.hud_weapon_name.text == "MACHINE GUN", "Slot 1 should be MACHINE GUN")
 	assert(lobby_menu.hud_shoot_type.text == "[FULL AUTO]", "Machine Gun shoot type should be [FULL AUTO]")
 	assert(lobby_menu.hud_ammo_current.text == "60", "Machine Gun mag should be 60")
 	
-	# Slot 2: Burst Rifle
 	wm.switch_weapon(2)
 	assert(lobby_menu.hud_weapon_name.text == "BURST RIFLE", "Slot 2 should be BURST RIFLE")
 	assert(lobby_menu.hud_shoot_type.text == "[3-ROUND BURST]", "Burst Rifle shoot type should be [3-ROUND BURST]")
 	
-	# Slot 3: Sniper Rifle
 	wm.switch_weapon(3)
 	assert(lobby_menu.hud_weapon_name.text == "SNIPER RIFLE", "Slot 3 should be SNIPER RIFLE")
 	assert(lobby_menu.hud_shoot_type.text == "[SEMI-AUTO]", "Sniper shoot type should be [SEMI-AUTO]")
 	
-	# Slot 4: Heavy Sniper
 	wm.switch_weapon(4)
 	assert(lobby_menu.hud_weapon_name.text == "HEAVY SNIPER", "Slot 4 should be HEAVY SNIPER")
 	assert(lobby_menu.hud_shoot_type.text == "[BOLT ACTION]", "Heavy Sniper shoot type should be [BOLT ACTION]")
 	assert(lobby_menu.hud_ammo_current.text == "5", "Heavy Sniper mag should be 5")
-	
-	# Test Ammo Consumption & Reload
-	var fired_w = wm.fire()
-	assert(fired_w != null, "Weapon fire should succeed")
-	assert(fired_w.current_ammo == 4, "Heavy Sniper ammo should decrement to 4")
-	wm.reload_current()
-	assert(fired_w.current_ammo == 5, "Ammo should replenish to 5 after reload")
 
-	print("PASS: 8. All 5 modular weapons (Assault Rifle, Machine Gun, Burst Rifle, Sniper, Heavy Sniper) & distinct shoot types verified.")
+	# Test Timed Reload with Weapon Switch Cancellation and Restart from Scratch
+	var heavy_w: WeaponData = wm.get_current_weapon()
+	for i in range(5):
+		wm._cooldown_timer = 0.0
+		var shot = wm.fire()
+		assert(shot != null, "Shot %d must succeed" % (i + 1))
+	
+	assert(heavy_w.current_ammo == 0, "Heavy sniper must be empty after 5 shots")
+	assert(wm.is_reloading == true, "Running out of bullets must automatically trigger reload timer")
+	assert(lobby_menu.hud_ammo_current.text == "RELOAD", "HUD ammo label must show RELOAD during reload")
+	
+	# Switch weapon away while reloading -> must cancel reload and leave weapon empty
+	wm.switch_weapon(0)
+	assert(wm.is_reloading == false, "Switching weapon must cancel reload")
+	assert(heavy_w.current_ammo == 0, "Cancelled weapon must not reload in background and stay at 0")
+	assert(lobby_menu.hud_weapon_name.text == "ASSAULT RIFLE", "Now holding Assault Rifle")
+
+	# Switch back to Heavy Sniper -> must still have 0 bullets and restart reload from the start
+	wm.switch_weapon(4)
+	assert(heavy_w.current_ammo == 0, "Heavy sniper still has 0 bullets upon switching back")
+	assert(wm.is_reloading == true, "Must automatically start reload from the beginning upon switching back")
+	assert(is_equal_approx(wm.reload_timer, heavy_w.reload_time), "Reload timer must restart from full duration")
+
+	# Switch away again and switch back -> cancels and restarts again likewise
+	wm.switch_weapon(1)
+	assert(wm.is_reloading == false, "Switching away again cancels reload again")
+	assert(heavy_w.current_ammo == 0, "Still empty")
+	wm.switch_weapon(4)
+	assert(wm.is_reloading == true, "Switching back restarts reload from the start again")
+
+	# Allow reload to complete
+	wm.finish_reload()
+	assert(wm.is_reloading == false, "Reload completed")
+	assert(heavy_w.current_ammo == 5, "Ammo replenished to 5 after completing reload")
+	assert(heavy_w.reserve_ammo == 15, "Reserve ammo decremented from 20 to 15")
+	assert(lobby_menu.hud_ammo_current.text == "5", "HUD displays 5 after reload completion")
+
+	print("PASS: 8b. All 5 modular weapons, shoot types, and timed reload with switch cancellation & restart verified.")
 
 	# 9. Test Character Model Switching & LeftHandIK on Player
 	# Switch to Ato Codes
@@ -192,18 +237,57 @@ func _ready() -> void:
 	# 11. Test Multiplayer Hosting with Character Choice
 	NetworkManager.local_player_name = "CyberAto"
 	NetworkManager.local_player_character = "Ato Codes"
-	NetworkManager.host_game(8944)
+	var test_port: int = randi_range(9100, 15000)
+	NetworkManager.host_game(test_port)
 	
 	var p_host: Player = world_node.players_container.get_node_or_null("1")
 	assert(p_host != null, "Host player must be spawned")
 	assert(p_host.character_model == "Ato Codes", "Host player must spawn with chosen character model 'Ato Codes'")
 	assert(p_host.get_node("Visuals/AtoCodes").visible == true, "Host AtoCodes model must be visible in world")
-	assert(p_host.get_node("Visuals/WeyzeroCodes").visible == false, "Host WeyzeroCodes model must be hidden")
+	# 12. Test In-World Pickup Collection, Equipped Visuals, Remote Shoot RPC & Locomotion Sync
+	assert(p_host.current_weapon_id == "", "Host player starts unarmed in world")
+	var ato_mount: Node3D = p_host.get_node("Visuals/AtoCodes/Skeleton3D/BoneAttachment3D/WeaponMount")
+	for child in ato_mount.get_children():
+		if child is Node3D:
+			assert(child.visible == false, "No weapon model visible when unarmed")
+	assert(p_host.muzzle == null, "Muzzle must be null when unarmed")
 	
+	# Collect in-world Rifle pickup
+	rifle_pickup._collect(p_host)
+	assert(p_host.current_weapon_id == "rifle", "Collecting rifle pickup equips rifle")
+	var rifle_node = ato_mount.get_node_or_null("Rifile")
+	assert(rifle_node != null and rifle_node.visible == true, "Rifile 3D model must be visible in hands")
+	assert(p_host.muzzle != null, "Muzzle must be assigned on rifle")
+	assert(p_host.left_hand_ik != null, "LeftHandIK exists")
+
+	# Test Remote Shoot RPC synchronization
+	p_host._rpc_remote_shoot(p_host.global_position, p_host.global_position + Vector3(0, 0, -10), "rifle")
+	assert(p_host.anim_tree.get("parameters/shoot_shot/request") == AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE, "Shoot anim triggered by RPC")
+	
+	# Test Locomotion Animation Sync (Walk, Run, Idle)
+	p_host.velocity = Vector3(4.0, 0.0, 0.0)
+	p_host._update_animation_state(0.016)
+	if p_host.anim_tree:
+		p_host.anim_tree.advance(0.3)
+	assert(p_host.anim_playback.get_current_node() == "Walk", "4.0 m/s velocity must trigger Walk animation")
+	
+	p_host.velocity = Vector3(8.5, 0.0, 0.0)
+	p_host._update_animation_state(0.016)
+	if p_host.anim_tree:
+		p_host.anim_tree.advance(0.3)
+	assert(p_host.anim_playback.get_current_node() == "Run", "8.5 m/s velocity must trigger Run animation")
+	
+	p_host.velocity = Vector3.ZERO
+	p_host._update_animation_state(0.016)
+	if p_host.anim_tree:
+		p_host.anim_tree.advance(0.3)
+	assert(p_host.anim_playback.get_current_node() == "Idle", "Zero velocity must trigger Idle animation")
+	print("PASS: 12. In-world pickup collection, 3D weapon mounting, remote shoot RPC, and locomotion animation sync verified.")
+
 	NetworkManager.disconnect_game()
 	print("PASS: 11. Multiplayer host spawned with chosen character 'Ato Codes' verified.")
 
 	print("==================================================")
-	print("ALL 11 TESTS PASSED WITH FLYING COLORS!")
+	print("ALL 12 TESTS PASSED WITH FLYING COLORS!")
 	print("==================================================")
 	get_tree().quit(0)

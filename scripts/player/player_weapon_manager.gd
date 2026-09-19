@@ -3,126 +3,62 @@ extends Node
 
 ## Player Weapon Manager
 ## Manages modular equipped weapons, ammunition, reloading, and firing cooldowns.
+## Players spawn unarmed (empty inventory) and must pick up weapons in the world.
+## Supports timed reload, automatic reload on empty, and reload cancellation/restart on weapon switch.
 
 signal weapon_changed(weapon: WeaponData)
 signal ammo_changed(current: int, reserve: int, is_infinite: bool)
 signal weapon_fired(weapon: WeaponData)
+signal reload_started(weapon: WeaponData, duration: float)
+signal reload_completed(weapon: WeaponData)
+signal reload_cancelled(weapon: WeaponData)
 
 @export var weapons: Array[WeaponData] = []
-var current_index: int = 0
+var current_index: int = -1
 var _cooldown_timer: float = 0.0
 
+# Reload state
+var is_reloading: bool = false
+var reload_timer: float = 0.0
+var reload_duration: float = 0.0
+var _reloading_weapon: WeaponData = null
+
+
 func _ready() -> void:
-	if weapons.is_empty():
-		_init_default_weapons()
+	# Players start with no weapons at spawn
+	if not weapons.is_empty():
+		current_index = 0
+	else:
+		current_index = -1
 	
 	call_deferred("_emit_initial_state")
 
 
-func _init_default_weapons() -> void:
-	# 1. Assault Rifle (Rifile.fbx) - Standard Full Auto
-	var rifle := WeaponData.new()
-	rifle.weapon_id = "rifle"
-	rifle.weapon_name = "ASSAULT RIFLE"
-	rifle.shoot_type = "FULL AUTO"
-	rifle.max_ammo = 30
-	rifle.current_ammo = 30
-	rifle.reserve_ammo = 120
-	rifle.fire_rate = 0.14
-	rifle.bullet_speed = 115.0
-	rifle.damage = 25.0
-	rifle.bullet_color = Color(0.1, 0.9, 1.0)
-	rifle.sfx_pitch = 1.25
-	rifle.spread_degrees = 0.5
-	rifle.model_name = "Rifile"
-	weapons.append(rifle)
-
-	# 2. Machine Gun (MachineGun.fbx) - Rapid Suppression Full Auto
-	var lmg := WeaponData.new()
-	lmg.weapon_id = "machine_gun"
-	lmg.weapon_name = "MACHINE GUN"
-	lmg.shoot_type = "FULL AUTO"
-	lmg.max_ammo = 60
-	lmg.current_ammo = 60
-	lmg.reserve_ammo = 240
-	lmg.fire_rate = 0.08
-	lmg.bullet_speed = 105.0
-	lmg.damage = 14.0
-	lmg.bullet_color = Color(1.0, 0.65, 0.15)
-	lmg.sfx_pitch = 1.45
-	lmg.spread_degrees = 2.2
-	lmg.model_name = "MachineGun"
-	weapons.append(lmg)
-
-	# 3. Burst Rifle (Rifile2.fbx) - 3-Round Tactical Burst
-	var burst := WeaponData.new()
-	burst.weapon_id = "burst_rifle"
-	burst.weapon_name = "BURST RIFLE"
-	burst.shoot_type = "3-ROUND BURST"
-	burst.max_ammo = 30
-	burst.current_ammo = 30
-	burst.reserve_ammo = 90
-	burst.fire_rate = 0.38
-	burst.burst_count = 3
-	burst.burst_interval = 0.06
-	burst.bullet_speed = 125.0
-	burst.damage = 22.0
-	burst.bullet_color = Color(0.2, 1.0, 0.4)
-	burst.sfx_pitch = 1.35
-	burst.spread_degrees = 0.8
-	burst.model_name = "Rifile2"
-	weapons.append(burst)
-
-	# 4. Sniper Rifle (Sniper.fbx) - High Velocity Precision Semi-Auto
-	var sniper := WeaponData.new()
-	sniper.weapon_id = "sniper_rifle"
-	sniper.weapon_name = "SNIPER RIFLE"
-	sniper.shoot_type = "SEMI-AUTO"
-	sniper.max_ammo = 10
-	sniper.current_ammo = 10
-	sniper.reserve_ammo = 40
-	sniper.fire_rate = 0.55
-	sniper.bullet_speed = 180.0
-	sniper.damage = 60.0
-	sniper.bullet_color = Color(0.95, 0.2, 0.85)
-	sniper.sfx_pitch = 0.85
-	sniper.spread_degrees = 0.0
-	sniper.model_name = "Sniper"
-	weapons.append(sniper)
-
-	# 5. Heavy Sniper (Sniper1.fbx) - Devastating Bolt Action Anti-Materiel
-	var heavy := WeaponData.new()
-	heavy.weapon_id = "heavy_sniper"
-	heavy.weapon_name = "HEAVY SNIPER"
-	heavy.shoot_type = "BOLT ACTION"
-	heavy.max_ammo = 5
-	heavy.current_ammo = 5
-	heavy.reserve_ammo = 20
-	heavy.fire_rate = 1.15
-	heavy.bullet_speed = 220.0
-	heavy.damage = 95.0
-	heavy.bullet_color = Color(1.0, 0.25, 0.1)
-	heavy.sfx_pitch = 0.65
-	heavy.spread_degrees = 0.0
-	heavy.model_name = "Sniper1"
-	weapons.append(heavy)
-
-
 func _emit_initial_state() -> void:
 	var cur := get_current_weapon()
+	weapon_changed.emit(cur)
 	if cur:
-		weapon_changed.emit(cur)
 		ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+	else:
+		ammo_changed.emit(0, 0, false)
 
 
 func _process(delta: float) -> void:
 	if _cooldown_timer > 0.0:
 		_cooldown_timer -= delta
 
+	if is_reloading:
+		reload_timer -= delta
+		if reload_timer <= 0.0:
+			finish_reload()
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	var player = get_parent()
 	if player and not player.is_multiplayer_authority():
+		return
+
+	if weapons.is_empty():
 		return
 
 	# Quick weapon slot switching 1, 2, 3, 4, 5
@@ -156,7 +92,11 @@ func add_or_refill_weapon(w_data: WeaponData) -> WeaponData:
 			var existing = weapons[i]
 			existing.current_ammo = existing.max_ammo
 			existing.reserve_ammo += w_data.max_ammo * 2
+			if is_reloading and _reloading_weapon == existing:
+				cancel_reload()
 			switch_weapon(i)
+			if current_index == i:
+				ammo_changed.emit(existing.current_ammo, existing.reserve_ammo, existing.is_infinite)
 			return existing
 	
 	# Create a clean duplicate instance to add
@@ -182,7 +122,7 @@ func switch_weapon_by_id(id: String) -> void:
 
 
 func get_current_weapon() -> WeaponData:
-	if weapons.is_empty():
+	if current_index < 0 or current_index >= weapons.size() or weapons.is_empty():
 		return null
 	return weapons[current_index]
 
@@ -190,10 +130,21 @@ func get_current_weapon() -> WeaponData:
 func switch_weapon(index: int) -> void:
 	if index < 0 or index >= weapons.size() or index == current_index:
 		return
+
+	# If currently reloading, switching away cancels the reload!
+	# The weapon is not reloaded and keeps its current ammo.
+	if is_reloading:
+		cancel_reload()
+
 	current_index = index
 	var cur := get_current_weapon()
 	weapon_changed.emit(cur)
-	ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+	if cur:
+		ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+		# If the newly selected weapon has 0 ammo in clip and has reserve,
+		# start reload from the beginning!
+		if cur.current_ammo == 0 and cur.reserve_ammo > 0 and not cur.is_infinite:
+			start_reload(cur)
 
 
 func cycle_weapon(delta: int) -> void:
@@ -204,6 +155,8 @@ func cycle_weapon(delta: int) -> void:
 
 
 func can_fire() -> bool:
+	if is_reloading:
+		return false
 	if _cooldown_timer > 0.0:
 		return false
 	var cur := get_current_weapon()
@@ -212,17 +165,159 @@ func can_fire() -> bool:
 
 func fire() -> WeaponData:
 	var cur := get_current_weapon()
-	if not cur or not can_fire():
+	if not cur:
+		return null
+
+	if is_reloading:
+		return null
+
+	if cur.current_ammo <= 0:
+		# Auto reload on empty if reserve is available
+		if cur.reserve_ammo > 0 and not is_reloading:
+			start_reload(cur)
+		return null
+
+	if _cooldown_timer > 0.0:
 		return null
 	
 	cur.consume_ammo()
 	_cooldown_timer = cur.fire_rate
 	weapon_fired.emit(cur)
 	ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+
+	# If the shot exhausted the magazine, immediately trigger reload with timer!
+	if cur.current_ammo == 0 and cur.reserve_ammo > 0 and not cur.is_infinite:
+		start_reload(cur)
+
 	return cur
+
+
+func start_reload(w: WeaponData) -> void:
+	if not w or is_reloading:
+		return
+	if w.is_infinite or w.current_ammo >= w.max_ammo or w.reserve_ammo <= 0:
+		return
+
+	is_reloading = true
+	_reloading_weapon = w
+	reload_duration = w.reload_time if w.reload_time > 0.0 else 1.8
+	reload_timer = reload_duration
+	reload_started.emit(w, reload_duration)
+
+
+func cancel_reload() -> void:
+	if not is_reloading:
+		return
+	var w := _reloading_weapon
+	is_reloading = false
+	_reloading_weapon = null
+	reload_timer = 0.0
+	reload_duration = 0.0
+	if w:
+		reload_cancelled.emit(w)
+
+
+func finish_reload() -> void:
+	if not is_reloading or not _reloading_weapon:
+		return
+	var w := _reloading_weapon
+	is_reloading = false
+	_reloading_weapon = null
+	reload_timer = 0.0
+	reload_duration = 0.0
+	
+	if w.reload():
+		reload_completed.emit(w)
+		if w == get_current_weapon():
+			ammo_changed.emit(w.current_ammo, w.reserve_ammo, w.is_infinite)
 
 
 func reload_current() -> void:
 	var cur := get_current_weapon()
-	if cur and cur.reload():
-		ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+	if cur and not is_reloading:
+		if cur.current_ammo < cur.max_ammo and cur.reserve_ammo > 0:
+			start_reload(cur)
+
+
+## Utility factory for creating full weapon instances by ID
+static func create_weapon_by_id(id: String) -> WeaponData:
+	var w := WeaponData.new()
+	match id:
+		"machine_gun":
+			w.weapon_id = "machine_gun"
+			w.weapon_name = "MACHINE GUN"
+			w.shoot_type = "FULL AUTO"
+			w.max_ammo = 60
+			w.current_ammo = 60
+			w.reserve_ammo = 240
+			w.fire_rate = 0.08
+			w.reload_time = 2.2
+			w.bullet_speed = 105.0
+			w.damage = 14.0
+			w.bullet_color = Color(1.0, 0.65, 0.15)
+			w.sfx_pitch = 1.45
+			w.spread_degrees = 2.2
+			w.model_name = "MachineGun"
+		"burst_rifle":
+			w.weapon_id = "burst_rifle"
+			w.weapon_name = "BURST RIFLE"
+			w.shoot_type = "3-ROUND BURST"
+			w.max_ammo = 30
+			w.current_ammo = 30
+			w.reserve_ammo = 90
+			w.fire_rate = 0.38
+			w.reload_time = 1.8
+			w.burst_count = 3
+			w.burst_interval = 0.06
+			w.bullet_speed = 125.0
+			w.damage = 22.0
+			w.bullet_color = Color(0.2, 1.0, 0.4)
+			w.sfx_pitch = 1.35
+			w.spread_degrees = 0.8
+			w.model_name = "Rifile2"
+		"sniper_rifle":
+			w.weapon_id = "sniper_rifle"
+			w.weapon_name = "SNIPER RIFLE"
+			w.shoot_type = "SEMI-AUTO"
+			w.max_ammo = 10
+			w.current_ammo = 10
+			w.reserve_ammo = 40
+			w.fire_rate = 0.55
+			w.reload_time = 2.0
+			w.bullet_speed = 180.0
+			w.damage = 60.0
+			w.bullet_color = Color(0.95, 0.2, 0.85)
+			w.sfx_pitch = 0.85
+			w.spread_degrees = 0.0
+			w.model_name = "Sniper"
+		"heavy_sniper":
+			w.weapon_id = "heavy_sniper"
+			w.weapon_name = "HEAVY SNIPER"
+			w.shoot_type = "BOLT ACTION"
+			w.max_ammo = 5
+			w.current_ammo = 5
+			w.reserve_ammo = 20
+			w.fire_rate = 1.15
+			w.reload_time = 2.5
+			w.bullet_speed = 220.0
+			w.damage = 95.0
+			w.bullet_color = Color(1.0, 0.25, 0.1)
+			w.sfx_pitch = 0.65
+			w.spread_degrees = 0.0
+			w.model_name = "Sniper1"
+		_:
+			w.weapon_id = "rifle"
+			w.weapon_name = "ASSAULT RIFLE"
+			w.shoot_type = "FULL AUTO"
+			w.max_ammo = 30
+			w.current_ammo = 30
+			w.reserve_ammo = 120
+			w.fire_rate = 0.14
+			w.reload_time = 1.6
+			w.bullet_speed = 115.0
+			w.damage = 25.0
+			w.bullet_color = Color(0.1, 0.9, 1.0)
+			w.sfx_pitch = 1.25
+			w.spread_degrees = 0.5
+			w.model_name = "Rifile"
+	return w

@@ -19,15 +19,15 @@ var _lifetime: float = 0.0
 func setup(start_pos: Vector3, target_pos: Vector3, exclude_rid: RID = RID(), bullet_speed: float = 95.0, col: Color = Color(0.0, 1.0, 0.95)) -> void:
 	speed = bullet_speed
 	bullet_color = col
-	global_position = start_pos
+	position = start_pos
 	target_point = target_pos
 	shooter_rid = exclude_rid
 	_max_dist = start_pos.distance_to(target_pos)
 	if _max_dist > 0.001:
 		direction = (target_pos - start_pos).normalized()
-		look_at(global_position + direction, Vector3.UP)
+		look_at_from_position(start_pos, start_pos + direction, Vector3.UP)
 	else:
-		direction = -global_transform.basis.z
+		direction = -transform.basis.z
 
 	var mesh_node := get_node_or_null("Mesh") as MeshInstance3D
 	if mesh_node:

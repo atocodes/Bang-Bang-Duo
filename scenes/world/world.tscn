@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://cmbn8q2k0i6my"]
+[gd_scene format=3 uid="uid://bbn2xkbnpuain"]
 
 [ext_resource type="Script" uid="uid://bvq7u5ueij73f" path="res://scripts/world/world.gd" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://6i5h3gpi671w" path="res://scenes/world/map_geometry.tscn" id="2_sl2e5"]
-[ext_resource type="PackedScene" path="res://scenes/weapons/weapon_pickup.tscn" id="3_pickup"]
+[ext_resource type="PackedScene" uid="uid://dp67x8a71wq4m" path="res://scenes/weapons/weapon_pickup.tscn" id="3_pickup"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.384314, 0.454902, 0.54902, 1)
@@ -48,27 +48,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -6)
 [node name="Players" type="Node3D" parent="." unique_id=309532107]
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=2107556555]
-_spawnable_scenes = PackedStringArray("res://scenes/player/player.tscn")
+_spawnable_scenes = PackedStringArray("uid://brgm8cwt4y0k")
 spawn_path = NodePath("../Players")
 
-[node name="WeaponPickups" type="Node3D" parent="."]
+[node name="WeaponPickups" type="Node3D" parent="." unique_id=707994759]
 
-[node name="Pickup_Rifle" parent="WeaponPickups" instance=ExtResource("3_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-weapon_id = "rifle"
+[node name="Pickup_Rifle" parent="WeaponPickups" unique_id=1479158422 instance=ExtResource("3_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 23.535276)
 
-[node name="Pickup_MachineGun" parent="WeaponPickups" instance=ExtResource("3_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 8)
+[node name="Pickup_MachineGun" parent="WeaponPickups" unique_id=366415586 instance=ExtResource("3_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.952269, 0.28363848, 0.18726778)
 weapon_id = "machine_gun"
 
-[node name="Pickup_BurstRifle" parent="WeaponPickups" instance=ExtResource("3_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -8)
+[node name="Pickup_BurstRifle" parent="WeaponPickups" unique_id=1955001991 instance=ExtResource("3_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.129708, 0, -24.188309)
 weapon_id = "burst_rifle"
 
-[node name="Pickup_Sniper" parent="WeaponPickups" instance=ExtResource("3_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 3, -8)
+[node name="Pickup_Sniper" parent="WeaponPickups" unique_id=560361545 instance=ExtResource("3_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.585849, 0.14927006, 15.863182)
 weapon_id = "sniper_rifle"
 
-[node name="Pickup_HeavySniper" parent="WeaponPickups" instance=ExtResource("3_pickup")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -14)
+[node name="Pickup_HeavySniper" parent="WeaponPickups" unique_id=616013051 instance=ExtResource("3_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.209381, 0, -0.033117533)
 weapon_id = "heavy_sniper"

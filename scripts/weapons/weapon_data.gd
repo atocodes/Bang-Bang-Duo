@@ -20,6 +20,7 @@ extends Resource
 @export var bullet_color: Color = Color(0.0, 1.0, 0.95)
 @export var sfx_pitch: float = 1.3
 @export var model_name: String = "Rifile"
+@export var reload_time: float = 1.8
 
 func can_shoot() -> bool:
 	return is_infinite or current_ammo > 0

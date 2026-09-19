@@ -78,6 +78,7 @@ func _create_weapon_data(id: String) -> WeaponData:
 			w.current_ammo = 60
 			w.reserve_ammo = 240
 			w.fire_rate = 0.08
+			w.reload_time = 2.2
 			w.bullet_speed = 105.0
 			w.damage = 14.0
 			w.bullet_color = Color(1.0, 0.65, 0.15)
@@ -92,6 +93,7 @@ func _create_weapon_data(id: String) -> WeaponData:
 			w.current_ammo = 30
 			w.reserve_ammo = 90
 			w.fire_rate = 0.38
+			w.reload_time = 1.8
 			w.burst_count = 3
 			w.burst_interval = 0.06
 			w.bullet_speed = 125.0
@@ -108,6 +110,7 @@ func _create_weapon_data(id: String) -> WeaponData:
 			w.current_ammo = 10
 			w.reserve_ammo = 40
 			w.fire_rate = 0.55
+			w.reload_time = 2.0
 			w.bullet_speed = 180.0
 			w.damage = 60.0
 			w.bullet_color = Color(0.95, 0.2, 0.85)
@@ -122,6 +125,7 @@ func _create_weapon_data(id: String) -> WeaponData:
 			w.current_ammo = 5
 			w.reserve_ammo = 20
 			w.fire_rate = 1.15
+			w.reload_time = 2.5
 			w.bullet_speed = 220.0
 			w.damage = 95.0
 			w.bullet_color = Color(1.0, 0.25, 0.1)
@@ -136,6 +140,7 @@ func _create_weapon_data(id: String) -> WeaponData:
 			w.current_ammo = 30
 			w.reserve_ammo = 120
 			w.fire_rate = 0.14
+			w.reload_time = 1.6
 			w.bullet_speed = 115.0
 			w.damage = 25.0
 			w.bullet_color = Color(0.1, 0.9, 1.0)

@@ -2,6 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://b65daj422uhhh" path="res://assets/map/Textures/colormap.png" id="1_6pmr0"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6pmr0"]
+albedo_texture = ExtResource("1_6pmr0")
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fw7ox"]
 resource_name = "colormap"
 cull_mode = 2
@@ -571,6 +574,7 @@ data = PackedVector3Array(-2, 0, -2, 1.9999, 0, -2, 1.9999, 0, 1.9999, 1.9999, 0
 transform = Transform3D(-0.02140506, 0, 0.9997709, 0, 1, 0, -0.9997709, 0, -0.02140506, -0.022758484, 0, 23.639282)
 
 [node name="corridor-end" type="MeshInstance3D" parent="corridor-end5" unique_id=1008255511]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_2srms")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-end5/corridor-end" unique_id=1026577296]
@@ -582,6 +586,7 @@ shape = SubResource("ConcavePolygonShape3D_2jim4")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.844181, 0, 15.761065)
 
 [node name="corridor-end" type="MeshInstance3D" parent="corridor-end4" unique_id=1493840844]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_2srms")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-end4/corridor-end" unique_id=748680366]
@@ -593,6 +598,7 @@ shape = SubResource("ConcavePolygonShape3D_1dh5s")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.443848, 0, -0.066137314)
 
 [node name="corridor-end" type="MeshInstance3D" parent="corridor-end2" unique_id=19845103]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_2srms")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-end2/corridor-end" unique_id=2001552923]
@@ -604,6 +610,7 @@ shape = SubResource("ConcavePolygonShape3D_jqg72")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.498249, 0, -0.027811766)
 
 [node name="corridor-transition" type="MeshInstance3D" parent="corridor-transition2" unique_id=2002113666]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_m520l")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-transition2/corridor-transition" unique_id=1665414608]
@@ -615,6 +622,7 @@ shape = SubResource("ConcavePolygonShape3D_7x2by")
 transform = Transform3D(-0.99999774, 0, 0.0021201372, 0, 1, 0, -0.0021201372, 0, -0.99999774, 21.490368, 0, 0)
 
 [node name="corridor-wide-end" type="MeshInstance3D" parent="corridor-wide-end2" unique_id=849966647]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_88j2f")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-wide-end2/corridor-wide-end" unique_id=1623203882]
@@ -626,6 +634,7 @@ shape = SubResource("ConcavePolygonShape3D_c0so8")
 transform = Transform3D(0.008205159, 0, -0.9999663, 0, 1, 0, 0.9999663, 0, 0.008205159, -0.1720314, 0, -14.015736)
 
 [node name="corridor-wide" type="MeshInstance3D" parent="corridor-wide2" unique_id=1853346759]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_grte7")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-wide2/corridor-wide" unique_id=1990101227]
@@ -637,10 +646,12 @@ shape = SubResource("ConcavePolygonShape3D_t25dj")
 transform = Transform3D(-0.9997666, 0, -0.02162092, 0, 1, 0, 0.02162092, 0, -0.9997666, -0.025627136, 0, -30.154202)
 
 [node name="gate-door" type="MeshInstance3D" parent="gate-door4" unique_id=670156439]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_o23hu")
 
 [node name="door" type="MeshInstance3D" parent="gate-door4/gate-door" unique_id=54561534]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 2.9832021e-09)
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_lpe5e")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="gate-door4/gate-door/door" unique_id=673070855]
@@ -661,10 +672,12 @@ libraries/ = SubResource("AnimationLibrary_87ws0")
 transform = Transform3D(-0.019078877, 0, 0.9998183, 0, 1, 0, -0.9998183, 0, -0.019078877, -10.336639, 0, -24.150982)
 
 [node name="gate-door" type="MeshInstance3D" parent="gate-door3" unique_id=1315846178]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_o23hu")
 
 [node name="door" type="MeshInstance3D" parent="gate-door3/gate-door" unique_id=2028497113]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 2.9832021e-09)
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_lpe5e")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="gate-door3/gate-door/door" unique_id=764807036]
@@ -684,6 +697,7 @@ libraries/ = SubResource("AnimationLibrary_87ws0")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.665399, 0, -24.187572)
 
 [node name="corridor" type="MeshInstance3D" parent="corridor2" unique_id=39368268]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_gpu4x")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor2/corridor" unique_id=682185499]
@@ -695,10 +709,12 @@ shape = SubResource("ConcavePolygonShape3D_hde16")
 transform = Transform3D(0.02426656, 0, -0.99970555, 0, 1, 0, 0.99970555, 0, 0.02426656, 14.0880165, 0, -24.232203)
 
 [node name="gate-door" type="MeshInstance3D" parent="gate-door2" unique_id=1801983245]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_o23hu")
 
 [node name="door" type="MeshInstance3D" parent="gate-door2/gate-door" unique_id=895827674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 2.9832021e-09)
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_lpe5e")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="gate-door2/gate-door/door" unique_id=481479760]
@@ -718,6 +734,7 @@ libraries/ = SubResource("AnimationLibrary_87ws0")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.028362274, 0, -9.681142)
 
 [node name="gate" type="MeshInstance3D" parent="gate2" unique_id=250059103]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_ty284")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="gate2/gate" unique_id=827794277]
@@ -728,6 +745,7 @@ shape = SubResource("ConcavePolygonShape3D_53jsh")
 [node name="room-large2" type="Node3D" parent="." unique_id=332032206]
 
 [node name="room-large" type="MeshInstance3D" parent="room-large2" unique_id=505751819]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_867wo")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="room-large2/room-large" unique_id=1085586626]
@@ -739,6 +757,7 @@ shape = SubResource("ConcavePolygonShape3D_twq32")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05379677, 0, 15.753227)
 
 [node name="room-small-variation" type="MeshInstance3D" parent="room-small-variation2" unique_id=931379852]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_4ddmb")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="room-small-variation2/room-small-variation" unique_id=95538899]
@@ -750,6 +769,7 @@ shape = SubResource("ConcavePolygonShape3D_5bqve")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.901358, 0, 0)
 
 [node name="room-wide-variation" type="MeshInstance3D" parent="room-wide-variation2" unique_id=1243255385]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_dkqtb")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="room-wide-variation2/room-wide-variation" unique_id=132736818]
@@ -761,6 +781,7 @@ shape = SubResource("ConcavePolygonShape3D_sxh2q")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -24.163528)
 
 [node name="room-wide" type="MeshInstance3D" parent="room-wide2" unique_id=931872128]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_07fgc")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="room-wide2/room-wide" unique_id=409488949]
@@ -772,6 +793,7 @@ shape = SubResource("ConcavePolygonShape3D_g70nb")
 transform = Transform3D(-0.99997956, 0, 0.006396099, 0, 1, 0, -0.006396099, 0, -0.99997956, 7.87241, 0, 15.793846)
 
 [node name="corridor-end" type="MeshInstance3D" parent="corridor-end3" unique_id=390376473]
+material_override = SubResource("StandardMaterial3D_6pmr0")
 mesh = SubResource("ArrayMesh_2srms")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="corridor-end3/corridor-end" unique_id=780766568]
