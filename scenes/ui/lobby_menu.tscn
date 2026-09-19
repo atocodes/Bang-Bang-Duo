@@ -1,170 +1,9 @@
-[gd_scene format=3 uid="uid://bqq2qklmfjqdo"]
+[gd_scene load_steps=3 format=3 uid="uid://cxvhwsk7h2lqp"]
 
-[ext_resource type="Script" uid="uid://drd0u4nlldyib" path="res://scripts/ui/lobby_menu.gd" id="1_menu"]
-[ext_resource type="Texture2D" uid="uid://dyo5wcy6wlqoy" path="res://splash-screen.png" id="2_splash"]
-[ext_resource type="FontFile" uid="uid://cjd54nihkwgra" path="res://assets/fonts/Jersey_10/Jersey10-Regular.ttf" id="3_jersey"]
-[ext_resource type="Script" uid="uid://c4c373c36q34b" path="res://addons/voxide/nodes/voxide_voice.gd" id="4_voice"]
-[ext_resource type="Texture2D" uid="uid://dw5e4oq4pxge3" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_depth_flat.png" id="5_blue_flat"]
-[ext_resource type="Texture2D" uid="uid://guogigpqxj07" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_depth_gloss.png" id="6_blue_gloss"]
-[ext_resource type="Texture2D" uid="uid://bc8uqqbxb6kn5" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_flat.png" id="7_blue_press"]
-[ext_resource type="Texture2D" uid="uid://cyhvfguga55gp" path="res://assets/kenney_ui/PNG/Grey/Double/button_rectangle_depth_flat.png" id="8_grey_flat"]
-[ext_resource type="Texture2D" uid="uid://buug2cgcrh0r" path="res://assets/kenney_ui/PNG/Grey/Double/button_rectangle_depth_gloss.png" id="9_grey_gloss"]
-[ext_resource type="Texture2D" uid="uid://4cbebtsva00j" path="res://assets/kenney_ui/PNG/Grey/Double/button_rectangle_flat.png" id="10_grey_press"]
-[ext_resource type="Texture2D" uid="uid://bol1he31detv8" path="res://assets/kenney_ui/PNG/Red/Double/button_rectangle_depth_flat.png" id="11_red_flat"]
-[ext_resource type="Texture2D" uid="uid://32vormo3inlg" path="res://assets/kenney_ui/PNG/Red/Double/button_rectangle_depth_gloss.png" id="12_red_gloss"]
-[ext_resource type="Texture2D" uid="uid://0up8yatxng8j" path="res://assets/kenney_ui/PNG/Red/Double/button_rectangle_flat.png" id="13_red_press"]
-[ext_resource type="Texture2D" uid="uid://dpdw71p1wg6en" path="res://assets/kenney_ui/PNG/Extra/Double/input_outline_rectangle.png" id="14_panel_border"]
-[ext_resource type="Texture2D" uid="uid://doank4wbu0lq6" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_depth_border.png" id="15_blue_border"]
-[ext_resource type="Texture2D" uid="uid://chq7420unc1xj" path="res://assets/kenney_crosshair/PNG/Outline/crosshair-001.png" id="16_crosshair"]
+[ext_resource type="Script" path="res://scripts/ui/lobby_menu.gd" id="1_menu"]
+[ext_resource type="Theme" path="res://scenes/ui/lobby_theme.tres" id="2_theme"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_menu_panel_ui"]
-content_margin_left = 36.0
-content_margin_top = 28.0
-content_margin_right = 36.0
-content_margin_bottom = 28.0
-texture = ExtResource("14_panel_border")
-texture_margin_left = 16.0
-texture_margin_top = 16.0
-texture_margin_right = 16.0
-texture_margin_bottom = 16.0
-modulate_color = Color(0.1, 0.16, 0.28, 0.96)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_input_box_ui"]
-content_margin_left = 16.0
-content_margin_top = 10.0
-content_margin_right = 16.0
-content_margin_bottom = 10.0
-texture = ExtResource("14_panel_border")
-texture_margin_left = 12.0
-texture_margin_top = 12.0
-texture_margin_right = 12.0
-texture_margin_bottom = 12.0
-modulate_color = Color(0.1, 0.24, 0.38, 0.98)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_grey_norm"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 14.0
-texture = ExtResource("8_grey_flat")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_grey_prs"]
-content_margin_left = 20.0
-content_margin_top = 12.0
-content_margin_right = 20.0
-content_margin_bottom = 12.0
-texture = ExtResource("10_grey_press")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_grey_hov"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 14.0
-texture = ExtResource("9_grey_gloss")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_blue_norm"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 14.0
-texture = ExtResource("5_blue_flat")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_blue_prs"]
-content_margin_left = 20.0
-content_margin_top = 12.0
-content_margin_right = 20.0
-content_margin_bottom = 12.0
-texture = ExtResource("7_blue_press")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_blue_hov"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 14.0
-texture = ExtResource("6_blue_gloss")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_red_norm"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 14.0
-texture = ExtResource("11_red_flat")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_red_prs"]
-content_margin_left = 20.0
-content_margin_top = 12.0
-content_margin_right = 20.0
-content_margin_bottom = 12.0
-texture = ExtResource("13_red_press")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_red_hov"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 14.0
-texture = ExtResource("12_red_gloss")
-texture_margin_left = 14.0
-texture_margin_top = 12.0
-texture_margin_right = 14.0
-texture_margin_bottom = 16.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wide_modal_ui"]
-content_margin_left = 40.0
-content_margin_top = 32.0
-content_margin_right = 40.0
-content_margin_bottom = 32.0
-texture = ExtResource("15_blue_border")
-texture_margin_left = 16.0
-texture_margin_top = 16.0
-texture_margin_right = 16.0
-texture_margin_bottom = 16.0
-modulate_color = Color(0.12, 0.22, 0.36, 0.98)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ip_box_ui"]
-content_margin_left = 20.0
-content_margin_top = 12.0
-content_margin_right = 20.0
-content_margin_bottom = 12.0
-texture = ExtResource("14_panel_border")
-texture_margin_left = 12.0
-texture_margin_top = 12.0
-texture_margin_right = 12.0
-texture_margin_bottom = 12.0
-modulate_color = Color(0.06, 0.28, 0.42, 0.98)
-
-[node name="LobbyMenu" type="Control" unique_id=1100113711]
+[node name="LobbyMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -172,9 +11,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+theme = ExtResource("2_theme")
 script = ExtResource("1_menu")
 
-[node name="BackgroundTexture" type="TextureRect" parent="." unique_id=1490064416]
+[node name="Backdrop" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -182,25 +22,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2_splash")
-expand_mode = 1
-stretch_mode = 6
+color = Color(0.02, 0.03, 0.05, 0.65)
 
-[node name="OverlayTint" type="ColorRect" parent="." unique_id=1250827540]
+[node name="MenuPanel" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0.06, 0.09, 0.16, 0.5)
-
-[node name="CenterArea" type="CenterContainer" parent="." unique_id=1502734259]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -275.0
+offset_right = 230.0
+offset_bottom = 275.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -211,144 +45,77 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_menu_panel_ui")
 
 [node name="VBox" type="VBoxContainer" parent="CenterArea/MenuButtonsPanel" unique_id=354959598]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=1590127494]
+[node name="Header" type="VBoxContainer" parent="MenuPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
+theme_override_constants/separation = 4
+
+[node name="BadgeRow" type="HBoxContainer" parent="MenuPanel/VBoxContainer/Header"]
+layout_mode = 2
+alignment = 1
+
+[node name="TagBadge" type="Label" parent="MenuPanel/VBoxContainer/Header/BadgeRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 1)
+theme_override_font_sizes/font_size = 11
+text = "✦ MULTIPLAYER ARENA ✦"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="MenuPanel/VBoxContainer/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.98, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 46
+theme_override_font_sizes/font_size = 26
 text = "BANG BANG DUO"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=998034495]
+[node name="Subtitle" type="Label" parent="MenuPanel/VBoxContainer/Header"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 20
-text = "MODULAR 3D MULTIPLAYER"
+theme_override_colors/font_color = Color(0.55, 0.65, 0.78, 1)
+theme_override_font_sizes/font_size = 13
+text = "Fast-Paced 3D Modular Shooter"
 horizontal_alignment = 1
 
-[node name="NameRow" type="HBoxContainer" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=2132566043]
+[node name="HSeparator1" type="HSeparator" parent="MenuPanel/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.15)
+layout_mode = 2
+
+[node name="ProfileSection" type="VBoxContainer" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="MenuPanel/VBoxContainer/ProfileSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.88, 1)
+theme_override_font_sizes/font_size = 12
+text = "PLAYER NAME"
+
+[node name="NameInput" type="LineEdit" parent="MenuPanel/VBoxContainer/ProfileSection"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "Player"
+placeholder_text = "Enter nickname..."
+max_length = 20
+
+[node name="TabContainer" type="HBoxContainer" parent="MenuPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="NameLabel" type="Label" parent="CenterArea/MenuButtonsPanel/VBox/NameRow" unique_id=1988359118]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 24
-text = "NAME:"
-
-[node name="NameInput" type="LineEdit" parent="CenterArea/MenuButtonsPanel/VBox/NameRow" unique_id=1271060066]
+[node name="TabJoinBtn" type="Button" parent="MenuPanel/VBoxContainer/TabContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
-text = "Player"
-placeholder_text = "Enter handle..."
-alignment = 1
+theme_type_variation = &"ActiveTabButton"
+text = "Join Game"
 
-[node name="RandomButton" type="Button" parent="CenterArea/MenuButtonsPanel/VBox/NameRow" unique_id=355672432]
-custom_minimum_size = Vector2(90, 0)
+[node name="TabHostBtn" type="Button" parent="MenuPanel/VBoxContainer/TabContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1, 0.15, 0.22, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 22
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_grey_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_grey_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_grey_hov")
-text = "RANDOM"
+size_flags_horizontal = 3
+theme_type_variation = &"InactiveTabButton"
+text = "Host Server"
 
-[node name="HostGameBtn" type="Button" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=1418367134]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
-text = "HOST A GAME"
-
-[node name="JoinGameBtn" type="Button" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=2133288298]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
-text = "JOIN GAME"
-
-[node name="VoiceAssistantBtn" type="Button" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=103088771]
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
-text = "VOICE ASSISTANT"
-
-[node name="SettingsBtn" type="Button" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=1056547213]
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.1, 0.15, 0.22, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_grey_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_grey_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_grey_hov")
-text = "CONTROLS & SETTINGS"
-
-[node name="QuitBtn" type="Button" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=105658319]
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
-text = "QUIT GAME"
-
-[node name="HostPanel" type="PanelContainer" parent="CenterArea" unique_id=1028741218]
-visible = false
-custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
-
-[node name="VBox" type="VBoxContainer" parent="CenterArea/HostPanel" unique_id=1446278252]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="HostTitle" type="Label" parent="CenterArea/HostPanel/VBox" unique_id=1980715207]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 44
-text = "HOST MULTIPLAYER MATCH"
-horizontal_alignment = 1
-
-[node name="IPHeader" type="Label" parent="CenterArea/HostPanel/VBox" unique_id=1012197657]
+[node name="ModeStack" type="VBoxContainer" parent="MenuPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.2, 1)
 theme_override_fonts/font = ExtResource("3_jersey")
@@ -356,15 +123,28 @@ theme_override_font_sizes/font_size = 26
 text = "YOUR IP ADDRESS (SHARE WITH DUO PARTNER):"
 horizontal_alignment = 1
 
-[node name="IPDisplayContainer" type="PanelContainer" parent="CenterArea/HostPanel/VBox" unique_id=1325150643]
+[node name="JoinSection" type="VBoxContainer" parent="MenuPanel/VBoxContainer/ModeStack"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_ip_box_ui")
+theme_override_constants/separation = 12
 
-[node name="HBox" type="HBoxContainer" parent="CenterArea/HostPanel/VBox/IPDisplayContainer" unique_id=1687173363]
+[node name="AddressRow" type="HBoxContainer" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 10
 
-[node name="HostIPValue" type="Label" parent="CenterArea/HostPanel/VBox/IPDisplayContainer/HBox" unique_id=931700498]
+[node name="IPCol" type="VBoxContainer" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.2
+theme_override_constants/separation = 6
+
+[node name="IPLabel" type="Label" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow/IPCol"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.88, 1)
+theme_override_font_sizes/font_size = 12
+text = "SERVER ADDRESS"
+
+[node name="IPInput" type="LineEdit" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow/IPCol"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 1, 0.85, 1)
@@ -408,8 +188,19 @@ theme_override_fonts/font = ExtResource("3_jersey")
 theme_override_font_sizes/font_size = 24
 text = "PORT:"
 
-[node name="HostPortInput" type="LineEdit" parent="CenterArea/HostPanel/VBox/PortRow" unique_id=132720276]
-custom_minimum_size = Vector2(100, 40)
+[node name="PortCol" type="VBoxContainer" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PortLabel" type="Label" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow/PortCol"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.88, 1)
+theme_override_font_sizes/font_size = 12
+text = "PORT"
+
+[node name="PortInput" type="LineEdit" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow/PortCol"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_jersey")
@@ -419,309 +210,66 @@ text = "8910"
 placeholder_text = "8910"
 alignment = 1
 
-[node name="HostStatusLabel" type="Label" parent="CenterArea/HostPanel/VBox" unique_id=926668733]
+[node name="JoinButton" type="Button" parent="MenuPanel/VBoxContainer/ModeStack/JoinSection"]
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 24
-text = "READY TO LAUNCH. PARTNER WILL JOIN VIA YOUR IP."
-horizontal_alignment = 1
+text = "Connect to Match"
 
-[node name="StartHostButton" type="Button" parent="CenterArea/HostPanel/VBox" unique_id=1059252730]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 34
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
-text = "START HOSTING MATCH"
-
-[node name="HostBackButton" type="Button" parent="CenterArea/HostPanel/VBox" unique_id=533464490]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
-text = "BACK TO MENU"
-
-[node name="JoinPanel" type="PanelContainer" parent="CenterArea" unique_id=759086406]
+[node name="HostSection" type="VBoxContainer" parent="MenuPanel/VBoxContainer/ModeStack"]
 visible = false
-custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
-
-[node name="VBox" type="VBoxContainer" parent="CenterArea/JoinPanel" unique_id=1473036040]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="JoinTitle" type="Label" parent="CenterArea/JoinPanel/VBox" unique_id=570153602]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 44
-text = "JOIN MULTIPLAYER MATCH"
-horizontal_alignment = 1
-
-[node name="IPLabel" type="Label" parent="CenterArea/JoinPanel/VBox" unique_id=559940263]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.88, 0.2, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "ENTER HOST IP ADDRESS & PORT:"
-horizontal_alignment = 1
-
-[node name="AddressRow" type="HBoxContainer" parent="CenterArea/JoinPanel/VBox" unique_id=588146297]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="JoinIPLineEdit" type="LineEdit" parent="CenterArea/JoinPanel/VBox/AddressRow" unique_id=1863225639]
-custom_minimum_size = Vector2(0, 54)
+[node name="PortRow" type="VBoxContainer" parent="MenuPanel/VBoxContainer/ModeStack/HostSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PortLabel" type="Label" parent="MenuPanel/VBoxContainer/ModeStack/HostSection/PortRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.88, 1)
+theme_override_font_sizes/font_size = 12
+text = "SERVER PORT"
+
+[node name="PortInput" type="LineEdit" parent="MenuPanel/VBoxContainer/ModeStack/HostSection/PortRow"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "8910"
+placeholder_text = "8910"
+
+[node name="HostInfo" type="Label" parent="MenuPanel/VBoxContainer/ModeStack/HostSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.6, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "Creates a local session. Other players on your local network can connect via your IP."
+autowrap_mode = 2
+
+[node name="HostButton" type="Button" parent="MenuPanel/VBoxContainer/ModeStack/HostSection"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Start Dedicated Host"
+
+[node name="StatusContainer" type="PanelContainer" parent="MenuPanel/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"StatusPill"
+
+[node name="StatusHBox" type="HBoxContainer" parent="MenuPanel/VBoxContainer/StatusContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="StatusDot" type="ColorRect" parent="MenuPanel/VBoxContainer/StatusContainer/StatusHBox"]
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+size_flags_vertical = 4
+color = Color(0.3, 0.8, 0.4, 1)
+
+[node name="StatusLabel" type="Label" parent="MenuPanel/VBoxContainer/StatusContainer/StatusHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
-text = "127.0.0.1"
-placeholder_text = "e.g. 192.168.1.50 or localhost"
-alignment = 1
-
-[node name="JoinPortInput" type="LineEdit" parent="CenterArea/JoinPanel/VBox/AddressRow" unique_id=1923812277]
-custom_minimum_size = Vector2(100, 54)
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
-text = "8910"
-placeholder_text = "Port"
-alignment = 1
-
-[node name="JoinStatusLabel" type="Label" parent="CenterArea/JoinPanel/VBox" unique_id=1948915005]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 24
-text = "READY TO CONNECT TO HOST."
-horizontal_alignment = 1
-
-[node name="JoinSubmitButton" type="Button" parent="CenterArea/JoinPanel/VBox" unique_id=641380995]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 34
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
-text = "CONNECT & JOIN GAME"
-
-[node name="JoinBackButton" type="Button" parent="CenterArea/JoinPanel/VBox" unique_id=1133962235]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
-text = "BACK TO MENU"
-
-[node name="VoicePanel" type="PanelContainer" parent="CenterArea" unique_id=34391641]
-visible = false
-custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
-
-[node name="VBox" type="VBoxContainer" parent="CenterArea/VoicePanel" unique_id=296413946]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="VoiceTitle" type="Label" parent="CenterArea/VoicePanel/VBox" unique_id=206277479]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 44
-text = "VOXIDE VOICE ASSISTANT"
-horizontal_alignment = 1
-
-[node name="VoiceSubtitle" type="Label" parent="CenterArea/VoicePanel/VBox" unique_id=2074852484]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.88, 0.2, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 22
-text = "HOLD SPACEBAR OR TALK BUTTON TO SPEAK (MAIN MENU ONLY)"
-horizontal_alignment = 1
-
-[node name="VoxideVoice" type="Control" parent="CenterArea/VoicePanel/VBox" unique_id=998160323]
-custom_minimum_size = Vector2(0, 240)
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("4_voice")
-background_color = Color(0.06, 0.12, 0.2, 0.9)
-border_color = Color(0.2, 0.45, 0.75, 0.8)
-
-[node name="VoiceBackButton" type="Button" parent="CenterArea/VoicePanel/VBox" unique_id=626860898]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
-text = "BACK TO MENU"
-
-[node name="SettingsPanel" type="PanelContainer" parent="CenterArea" unique_id=871217769]
-visible = false
-custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
-
-[node name="VBox" type="VBoxContainer" parent="CenterArea/SettingsPanel" unique_id=2062355714]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="SettingsTitle" type="Label" parent="CenterArea/SettingsPanel/VBox" unique_id=403133576]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 44
-text = "CONTROLS & SETTINGS"
-horizontal_alignment = 1
-
-[node name="ControlsCard" type="PanelContainer" parent="CenterArea/SettingsPanel/VBox" unique_id=1716629100]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_ip_box_ui")
-
-[node name="ControlsGrid" type="GridContainer" parent="CenterArea/SettingsPanel/VBox/ControlsCard" unique_id=1291110777]
-layout_mode = 2
-theme_override_constants/h_separation = 24
-theme_override_constants/v_separation = 8
-columns = 2
-
-[node name="MoveKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=2119329916]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "[W][A][S][D]"
-
-[node name="MoveDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=591282379]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "Move Character"
-
-[node name="RunKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1425456285]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "[Shift]"
-
-[node name="RunDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1119680762]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "Sprint / Run"
-
-[node name="JumpKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1256767964]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "[Space]"
-
-[node name="JumpDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1629367544]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "Jump"
-
-[node name="AimKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1448978139]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "[Mouse Look]"
-
-[node name="AimDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1890015011]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "Look / Aim"
-
-[node name="MouseModeKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1362757263]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "[ESC]"
-
-[node name="MouseModeDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1088424796]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "Toggle Mouse Cursor"
-
-[node name="SettingsBackButton" type="Button" parent="CenterArea/SettingsPanel/VBox" unique_id=2038331347]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
-text = "BACK TO MENU"
-
-[node name="FooterLabel" type="Label" parent="." unique_id=1554129557]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -42.0
-offset_right = 300.0
-offset_bottom = -14.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.7, 0.85, 1, 0.6)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 22
-text = "BANG BANG DUO • MULTIPLAYER 3D ARENA"
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.8, 0.88, 0.98, 1)
+theme_override_font_sizes/font_size = 12
+text = "Ready to connect..."
+autowrap_mode = 2
 
 [node name="HUD" type="Control" parent="." unique_id=1203606441]
 visible = false
@@ -733,170 +281,70 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TopLeftCard" type="MarginContainer" parent="HUD" unique_id=689578319]
+[node name="TopBar" type="PanelContainer" parent="HUD"]
 layout_mode = 1
-offset_right = 320.0
-offset_bottom = 100.0
-mouse_filter = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 16
-
-[node name="Panel" type="PanelContainer" parent="HUD/TopLeftCard" unique_id=1863326963]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_ip_box_ui")
-
-[node name="VBox" type="VBoxContainer" parent="HUD/TopLeftCard/Panel" unique_id=1039837086]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="PlayerNameLabel" type="Label" parent="HUD/TopLeftCard/Panel/VBox" unique_id=1205659650]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 30
-text = "PLAYER"
-
-[node name="StatusRow" type="HBoxContainer" parent="HUD/TopLeftCard/Panel/VBox" unique_id=982327674]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="RoleBadge" type="Label" parent="HUD/TopLeftCard/Panel/VBox/StatusRow" unique_id=1321798870]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 1, 0.5, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 20
-text = "ROLE: HOST"
-
-[node name="ActivePlayers" type="Label" parent="HUD/TopLeftCard/Panel/VBox/StatusRow" unique_id=1440339173]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.9, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 20
-text = "PLAYERS: 1"
-
-[node name="TopRightCard" type="MarginContainer" parent="HUD" unique_id=389530262]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = 10
 anchor_right = 1.0
-offset_left = -200.0
-offset_bottom = 80.0
-grow_horizontal = 0
-mouse_filter = 2
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 20
-
-[node name="DisconnectButton" type="Button" parent="HUD/TopRightCard" unique_id=2010871534]
-custom_minimum_size = Vector2(170, 48)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
-theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
-text = "DISCONNECT"
-
-[node name="Crosshair" type="TextureRect" parent="HUD" unique_id=332439351]
-modulate = Color(1, 1, 1, 0.9)
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.55
-anchor_top = 0.46
-anchor_right = 0.55
-anchor_bottom = 0.46
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = 68.0
 grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("16_crosshair")
-expand_mode = 1
-stretch_mode = 5
+theme_type_variation = &"HUDBarPanel"
 
-[node name="BottomLeftCard" type="MarginContainer" parent="HUD" unique_id=526046689]
+[node name="MarginContainer" type="MarginContainer" parent="HUD/TopBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/TopBar/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LiveIndicator" type="ColorRect" parent="HUD/TopBar/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+size_flags_vertical = 4
+color = Color(0.2, 0.85, 0.45, 1)
+
+[node name="HUDStatus" type="Label" parent="HUD/TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "CONNECTED"
+
+[node name="PlayersBadge" type="Label" parent="HUD/TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.38, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "● 1 Player"
+
+[node name="VSeparator" type="VSeparator" parent="HUD/TopBar/MarginContainer/HBoxContainer"]
+modulate = Color(1, 1, 1, 0.2)
+layout_mode = 2
+
+[node name="DisconnectButton" type="Button" parent="HUD/TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"DangerButton"
+text = "Leave Match"
+
+[node name="ControlsPanel" type="PanelContainer" parent="HUD"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -65.0
-offset_right = 520.0
+offset_left = 20.0
+offset_top = -54.0
+offset_right = 410.0
+offset_bottom = -16.0
 grow_vertical = 0
-mouse_filter = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_bottom = 16
+theme_type_variation = &"StatusPill"
 
-[node name="Panel" type="PanelContainer" parent="HUD/BottomLeftCard" unique_id=1323433235]
+[node name="ControlsInfo" type="Label" parent="HUD/ControlsPanel"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_ip_box_ui")
-
-[node name="ControlsLabel" type="Label" parent="HUD/BottomLeftCard/Panel" unique_id=1073804058]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 19
-text = "[WASD] MOVE • [SPACE] JUMP • [SHIFT] SPRINT • [LMB] SHOOT • [1-3/SCROLL] WEAPON • [R] RELOAD • [ESC] CURSOR"
-
-[node name="BottomRightCard" type="MarginContainer" parent="HUD" unique_id=1862596702]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -280.0
-offset_top = -110.0
-grow_horizontal = 0
-grow_vertical = 0
-mouse_filter = 2
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 16
-
-[node name="Panel" type="PanelContainer" parent="HUD/BottomRightCard" unique_id=686188282]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_ip_box_ui")
-
-[node name="VBox" type="VBoxContainer" parent="HUD/BottomRightCard/Panel" unique_id=429464764]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="WeaponNameLabel" type="Label" parent="HUD/BottomRightCard/Panel/VBox" unique_id=1276945110]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 26
-text = "PULSE BLASTER"
-
-[node name="AmmoRow" type="HBoxContainer" parent="HUD/BottomRightCard/Panel/VBox" unique_id=1685342931]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="AmmoTag" type="Label" parent="HUD/BottomRightCard/Panel/VBox/AmmoRow" unique_id=95103155]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 0.8)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 20
-text = "AMMO"
-
-[node name="AmmoCurrentLabel" type="Label" parent="HUD/BottomRightCard/Panel/VBox/AmmoRow" unique_id=1140030375]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 36
-text = "30"
-
-[node name="AmmoReserveLabel" type="Label" parent="HUD/BottomRightCard/Panel/VBox/AmmoRow" unique_id=263995924]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 24
-text = "/ 120"
+theme_override_colors/font_color = Color(0.7, 0.78, 0.88, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "WASD: Move  •  Space: Jump  •  Shift: Sprint  •  ESC: Cursor"

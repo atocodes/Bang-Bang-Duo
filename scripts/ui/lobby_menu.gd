@@ -2,74 +2,41 @@ class_name LobbyMenu
 extends Control
 
 ## LobbyMenu Controller
-## Arcade-style menu navigation for hosting, joining, settings,
-## and Voxide Voice Assistant integration strictly on the Main Menu.
+## Clean, modern UI for hosting, joining, setting player profiles, and HUD status feedback.
 
-# --- Background & Overlay ---
-@onready var background_texture: TextureRect = $BackgroundTexture
-@onready var overlay_tint: ColorRect = $OverlayTint
+@onready var menu_panel: PanelContainer = $MenuPanel
+@onready var backdrop: ColorRect = $Backdrop
+@onready var name_input: LineEdit = $MenuPanel/VBoxContainer/ProfileSection/NameInput
+@onready var tab_join_btn: Button = $MenuPanel/VBoxContainer/TabContainer/TabJoinBtn
+@onready var tab_host_btn: Button = $MenuPanel/VBoxContainer/TabContainer/TabHostBtn
+@onready var join_section: VBoxContainer = $MenuPanel/VBoxContainer/ModeStack/JoinSection
+@onready var host_section: VBoxContainer = $MenuPanel/VBoxContainer/ModeStack/HostSection
 
-# --- CenterArea & Panels ---
-@onready var center_area: CenterContainer = $CenterArea
-@onready var menu_buttons_panel: PanelContainer = $CenterArea/MenuButtonsPanel
-@onready var host_panel: PanelContainer = $CenterArea/HostPanel
-@onready var join_panel: PanelContainer = $CenterArea/JoinPanel
-@onready var voice_panel: PanelContainer = $CenterArea/VoicePanel
-@onready var settings_panel: PanelContainer = $CenterArea/SettingsPanel
+@onready var ip_input: LineEdit = $MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow/IPCol/IPInput
+@onready var join_port_input: LineEdit = $MenuPanel/VBoxContainer/ModeStack/JoinSection/AddressRow/PortCol/PortInput
+@onready var host_port_input: LineEdit = $MenuPanel/VBoxContainer/ModeStack/HostSection/PortRow/PortInput
+@onready var join_button: Button = $MenuPanel/VBoxContainer/ModeStack/JoinSection/JoinButton
+@onready var host_button: Button = $MenuPanel/VBoxContainer/ModeStack/HostSection/HostButton
 
-# --- Main Buttons ---
-@onready var name_input: LineEdit = $CenterArea/MenuButtonsPanel/VBox/NameRow/NameInput
-@onready var random_name_btn: Button = $CenterArea/MenuButtonsPanel/VBox/NameRow/RandomButton
-@onready var host_game_btn: Button = $CenterArea/MenuButtonsPanel/VBox/HostGameBtn
-@onready var join_game_btn: Button = $CenterArea/MenuButtonsPanel/VBox/JoinGameBtn
-@onready var voice_assistant_btn: Button = $CenterArea/MenuButtonsPanel/VBox/VoiceAssistantBtn
-@onready var settings_btn: Button = $CenterArea/MenuButtonsPanel/VBox/SettingsBtn
-@onready var quit_btn: Button = $CenterArea/MenuButtonsPanel/VBox/QuitBtn
+@onready var status_container: PanelContainer = $MenuPanel/VBoxContainer/StatusContainer
+@onready var status_dot: ColorRect = $MenuPanel/VBoxContainer/StatusContainer/StatusHBox/StatusDot
+@onready var status_label: Label = $MenuPanel/VBoxContainer/StatusContainer/StatusHBox/StatusLabel
 
-# --- Host Panel Controls ---
-@onready var host_ip_label: Label = $CenterArea/HostPanel/VBox/IPDisplayContainer/HBox/HostIPValue
-@onready var copy_ip_button: Button = $CenterArea/HostPanel/VBox/IPDisplayContainer/HBox/CopyIPButton
-@onready var copy_feedback_label: Label = $CenterArea/HostPanel/VBox/CopyFeedbackLabel
-@onready var host_port_input: LineEdit = $CenterArea/HostPanel/VBox/PortRow/HostPortInput
-@onready var host_status_label: Label = $CenterArea/HostPanel/VBox/HostStatusLabel
-@onready var start_host_button: Button = $CenterArea/HostPanel/VBox/StartHostButton
-@onready var host_back_button: Button = $CenterArea/HostPanel/VBox/HostBackButton
-
-# --- Join Panel Controls ---
-@onready var join_ip_input: LineEdit = $CenterArea/JoinPanel/VBox/AddressRow/JoinIPLineEdit
-@onready var join_port_input: LineEdit = $CenterArea/JoinPanel/VBox/AddressRow/JoinPortInput
-@onready var join_status_label: Label = $CenterArea/JoinPanel/VBox/JoinStatusLabel
-@onready var join_submit_button: Button = $CenterArea/JoinPanel/VBox/JoinSubmitButton
-@onready var join_back_button: Button = $CenterArea/JoinPanel/VBox/JoinBackButton
-
-# --- Voice Panel Controls ---
-@onready var voxide_voice: VoxideVoice = $CenterArea/VoicePanel/VBox/VoxideVoice
-@onready var voice_back_button: Button = $CenterArea/VoicePanel/VBox/VoiceBackButton
-
-# --- Settings Panel Controls ---
-@onready var settings_back_button: Button = $CenterArea/SettingsPanel/VBox/SettingsBackButton
-
-# --- In-Game HUD (4 Corners) ---
 @onready var hud_panel: Control = $HUD
-@onready var hud_player_name: Label = $HUD/TopLeftCard/Panel/VBox/PlayerNameLabel
-@onready var hud_role_badge: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/RoleBadge
-@onready var hud_active_players: Label = $HUD/TopLeftCard/Panel/VBox/StatusRow/ActivePlayers
-@onready var disconnect_button: Button = $HUD/TopRightCard/DisconnectButton
-@onready var hud_weapon_name: Label = $HUD/BottomRightCard/Panel/VBox/WeaponNameLabel
-@onready var hud_ammo_current: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoCurrentLabel
-@onready var hud_ammo_reserve: Label = $HUD/BottomRightCard/Panel/VBox/AmmoRow/AmmoReserveLabel
+@onready var hud_status: Label = $HUD/TopBar/MarginContainer/HBoxContainer/HUDStatus
+@onready var hud_players_badge: Label = $HUD/TopBar/MarginContainer/HBoxContainer/PlayersBadge
+@onready var disconnect_button: Button = $HUD/TopBar/MarginContainer/HBoxContainer/DisconnectButton
 
-var _hooked_weapon_manager: PlayerWeaponManager = null
+enum Mode { JOIN, HOST }
+var current_mode: Mode = Mode.JOIN
 
-var _current_panel: Control
-var _detected_ip: String = "127.0.0.1"
+# Colors for status indicators
+const COLOR_IDLE: Color = Color(0.3, 0.8, 0.4, 1.0)      # Green
+const COLOR_CONNECTING: Color = Color(0.95, 0.75, 0.2, 1.0) # Amber
+const COLOR_ERROR: Color = Color(0.95, 0.3, 0.35, 1.0)     # Red
+const COLOR_INFO: Color = Color(0.3, 0.7, 1.0, 1.0)        # Cyan
 
-const RANDOM_NAMES: Array[String] = [
-	"Maverick", "Shadow", "Blaster", "Pixel", "Nova",
-	"Vortex", "Apex", "Echo", "Dash", "Ace",
-	"Specter", "Rogue", "Striker", "Bullet", "Cipher", "Phantom"
-]
-
+var status_tween: Tween
 
 func _ready() -> void:
 	_current_panel = menu_buttons_panel
@@ -102,9 +69,16 @@ func _ready() -> void:
 
 	# Wire HUD Actions
 	disconnect_button.pressed.connect(_on_disconnect_pressed)
-
-	# Focus safety for text inputs
-	_setup_focus_safety([name_input, host_port_input, join_ip_input, join_port_input])
+	name_input.text_changed.connect(_on_name_changed)
+	
+	tab_join_btn.pressed.connect(func(): _switch_mode(Mode.JOIN))
+	tab_host_btn.pressed.connect(func(): _switch_mode(Mode.HOST))
+	
+	# Enter key triggers action in LineEdits
+	name_input.text_submitted.connect(func(_text): _trigger_primary_action())
+	ip_input.text_submitted.connect(func(_text): _on_join_pressed())
+	join_port_input.text_submitted.connect(func(_text): _on_join_pressed())
+	host_port_input.text_submitted.connect(func(_text): _on_host_pressed())
 
 	# Wire NetworkManager events
 	NetworkManager.server_started.connect(_on_server_started)
@@ -119,76 +93,78 @@ func _ready() -> void:
 
 	# Initial UI State
 	_set_ui_state(false)
-	_switch_to(menu_buttons_panel)
+	_switch_mode(Mode.JOIN, false)
+	_set_status("Ready to play. Choose a mode below.", COLOR_IDLE)
+	
+	# Play entrance animation
+	_animate_entrance()
 
 
-func _switch_to(target_panel: Control) -> void:
-	if not target_panel:
-		return
-	menu_buttons_panel.visible = (target_panel == menu_buttons_panel)
-	host_panel.visible = (target_panel == host_panel)
-	join_panel.visible = (target_panel == join_panel)
-	voice_panel.visible = (target_panel == voice_panel)
-	settings_panel.visible = (target_panel == settings_panel)
-	_current_panel = target_panel
+func _switch_mode(mode: Mode, animate: bool = true) -> void:
+	current_mode = mode
+	var is_join = (mode == Mode.JOIN)
+	
+	join_section.visible = is_join
+	host_section.visible = not is_join
+	
+	# Update tab buttons styling
+	tab_join_btn.set_meta("active", is_join)
+	tab_host_btn.set_meta("active", not is_join)
+	_update_tab_button_style(tab_join_btn, is_join)
+	_update_tab_button_style(tab_host_btn, not is_join)
+	
+	if animate:
+		var target_section = join_section if is_join else host_section
+		target_section.modulate.a = 0.0
+		var tween = create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(target_section, "modulate:a", 1.0, 0.18)
 
 
-func _refresh_host_ip() -> void:
-	_detected_ip = IPHelper.get_local_ipv4()
-	if host_ip_label:
-		host_ip_label.text = _detected_ip
+func _update_tab_button_style(button: Button, is_active: bool) -> void:
+	if is_active:
+		button.theme_type_variation = "ActiveTabButton"
+	else:
+		button.theme_type_variation = "InactiveTabButton"
 
 
-func _on_copy_ip_pressed() -> void:
-	DisplayServer.clipboard_set(_detected_ip)
-	if copy_feedback_label:
-		copy_feedback_label.text = "IP COPIED TO CLIPBOARD!"
-		var tween := create_tween()
-		tween.tween_property(copy_feedback_label, "modulate:a", 1.0, 0.15)
-		tween.tween_interval(1.8)
-		tween.tween_property(copy_feedback_label, "modulate:a", 0.0, 0.3)
+func _trigger_primary_action() -> void:
+	if current_mode == Mode.JOIN:
+		_on_join_pressed()
+	else:
+		_on_host_pressed()
 
 
-func _on_start_host_pressed() -> void:
-	var port := host_port_input.text.to_int()
+func _on_name_changed(new_name: String) -> void:
+	if new_name.strip_edges().is_empty():
+		NetworkManager.local_player_name = "Player"
+	else:
+		NetworkManager.local_player_name = new_name.strip_edges()
+
+
+func _on_host_pressed() -> void:
+	var port = host_port_input.text.to_int()
 	if port <= 0:
 		port = NetworkManager.DEFAULT_PORT
 
-	host_status_label.text = "STARTING SERVER ON PORT %d..." % port
-	var error: Error = NetworkManager.host_game(port)
+	_set_status("Starting server on port %d..." % port, COLOR_CONNECTING, true)
+	var error = NetworkManager.host_game(port)
 	if error != OK:
-		host_status_label.text = "FAILED TO START SERVER (CODE: %d)" % error
+		_set_status("Error hosting server! (Code: %d)" % error, COLOR_ERROR)
 
 
 func _on_join_submit_pressed() -> void:
 	var ip := join_ip_input.text.strip_edges()
 	if ip.is_empty():
 		ip = NetworkManager.DEFAULT_IP
-
-	var port := join_port_input.text.to_int()
+	
+	var port = join_port_input.text.to_int()
 	if port <= 0:
 		port = NetworkManager.DEFAULT_PORT
 
-	join_status_label.text = "CONNECTING TO %s:%d..." % [ip, port]
-	var error: Error = NetworkManager.join_game(ip, port)
+	_set_status("Connecting to %s:%d..." % [ip, port], COLOR_CONNECTING, true)
+	var error = NetworkManager.join_game(ip, port)
 	if error != OK:
-		join_status_label.text = "FAILED TO START CLIENT (CODE: %d)" % error
-
-
-func _on_random_pressed() -> void:
-	var handle: String = RANDOM_NAMES.pick_random()
-	var num: int = randi_range(10, 99)
-	var generated: String = "%s_%d" % [handle, num]
-	name_input.text = generated
-	_on_name_changed(generated)
-
-
-func _on_name_changed(new_name: String) -> void:
-	var clean := new_name.strip_edges()
-	if clean.is_empty():
-		NetworkManager.local_player_name = "Player"
-	else:
-		NetworkManager.local_player_name = clean
+		_set_status("Error starting client! (Code: %d)" % error, COLOR_ERROR)
 
 
 func _on_disconnect_pressed() -> void:
@@ -336,67 +312,65 @@ func _on_ammo_changed(cur: int, reserve: int, is_infinite: bool) -> void:
 # --- Network Events ---
 func _on_server_started() -> void:
 	_set_ui_state(true)
-	_update_player_hud()
+	hud_status.text = "HOSTING SERVER"
+	_update_player_count_badge(1)
 
 
 func _on_connection_successful() -> void:
 	_set_ui_state(true)
-	_update_player_hud()
+	hud_status.text = "CONNECTED (%s)" % NetworkManager.local_player_name
+	_update_player_count_badge(NetworkManager.players.size())
 
 
 func _on_connection_failed() -> void:
 	_set_ui_state(false)
-	join_status_label.text = "FAILED TO CONNECT TO HOST."
+	_set_status("Failed to connect to host. Check IP & port.", COLOR_ERROR)
 
 
 func _on_server_closed() -> void:
 	_set_ui_state(false)
-	if _current_panel == host_panel:
-		host_status_label.text = "SESSION CLOSED."
-	elif _current_panel == join_panel:
-		join_status_label.text = "DISCONNECTED FROM HOST."
+	_set_status("Disconnected from session.", COLOR_INFO)
 
 
-func _update_player_hud(_id: int = 0, _info: Dictionary = {}) -> void:
-	if not hud_panel:
-		return
-	var my_id := multiplayer.get_unique_id()
-	var my_name := NetworkManager.get_player_name(my_id)
-	if hud_player_name:
-		hud_player_name.text = my_name
-	if hud_role_badge:
-		hud_role_badge.text = "ROLE: HOST" if multiplayer.is_server() else "ROLE: CLIENT"
-	if hud_active_players:
-		var count := NetworkManager.players.size()
-		if count == 0 and multiplayer.multiplayer_peer:
-			count = 1
-		hud_active_players.text = "PLAYERS: %d" % count
+func _update_player_hud(_id: int, _info: Dictionary) -> void:
+	if hud_panel.visible:
+		var count = NetworkManager.players.size()
+		var is_host = multiplayer.is_server()
+		var role = "HOST" if is_host else "CLIENT"
+		hud_status.text = "%s • %s" % [role, NetworkManager.local_player_name]
+		_update_player_count_badge(count)
 
 
-## Controls screen visibility and strict Voxide lifecycle between Main Menu and Gameplay.
+func _update_player_count_badge(count: int) -> void:
+	hud_players_badge.text = "● %d %s" % [count, "Player" if count == 1 else "Players"]
+
+
+func _set_status(msg: String, dot_color: Color, pulse: bool = false) -> void:
+	status_label.text = msg
+	status_dot.color = dot_color
+	
+	if status_tween and status_tween.is_valid():
+		status_tween.kill()
+		
+	if pulse:
+		status_tween = create_tween().set_loops()
+		status_tween.tween_property(status_dot, "modulate:a", 0.3, 0.5).set_trans(Tween.TRANS_SINE)
+		status_tween.tween_property(status_dot, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_SINE)
+	else:
+		status_dot.modulate.a = 1.0
+
+
 func _set_ui_state(in_game: bool) -> void:
-	if background_texture:
-		background_texture.visible = not in_game
-	if overlay_tint:
-		overlay_tint.visible = not in_game
-	center_area.visible = not in_game
+	menu_panel.visible = not in_game
+	backdrop.visible = not in_game
 	hud_panel.visible = in_game
 
-	if in_game:
-		# Strictly disable Voxide completely during gameplay
-		if voxide_voice:
-			voxide_voice.visible = false
-			voxide_voice.set_process(false)
-			voxide_voice.set_physics_process(false)
-			voxide_voice.push_to_talk = false
-			voxide_voice.disconnect_session()
-	else:
-		# Re-enable Voxide for easy access on the Main Menu
-		_switch_to(menu_buttons_panel)
-		if voxide_voice:
-			voxide_voice.visible = true
-			voxide_voice.set_process(true)
-			voxide_voice.set_physics_process(true)
-			voxide_voice.push_to_talk = true
-			if voxide_voice.auto_connect:
-				voxide_voice.connect_session()
+
+func _animate_entrance() -> void:
+	menu_panel.modulate.a = 0.0
+	menu_panel.scale = Vector2(0.96, 0.96)
+	menu_panel.pivot_offset = menu_panel.size / 2.0
+	
+	var tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(menu_panel, "modulate:a", 1.0, 0.35)
+	tween.tween_property(menu_panel, "scale", Vector2.ONE, 0.35)
