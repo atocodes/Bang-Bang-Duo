@@ -4,22 +4,40 @@
 [![Physics](https://img.shields.io/badge/Physics-Jolt_3D-FF6B6B)](https://github.com/godot-jolt/godot-jolt)
 [![Networking](https://img.shields.io/badge/Multiplayer-ENet_RPC-2EA44F)](https://docs.godotengine.org/en/stable/tutorials/networking/high_level_multiplayer.html)
 [![Voice AI](https://img.shields.io/badge/AI-Voxide_Voice-8A2BE2)](https://github.com/atocodes/voxide)
+[![Changelog](https://img.shields.io/badge/Changelog-Keep_a_Changelog-orange.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Bang Bang Duo** is a fast-paced, modular 3D multiplayer arena shooter built with **Godot 4**, **GDScript**, **Jolt 3D Physics**, and Godot's **High-Level Multiplayer API**. Featuring responsive third-person combat, multi-weapon arsenals, server-authoritative replication, and an integrated **Voxide Voice AI Assistant** directly in the lobby.
+**Bang Bang Duo** is a fast-paced, modular 3D multiplayer arena shooter built with **Godot 4**, **GDScript**, **Jolt 3D Physics**, and Godot's **High-Level Multiplayer API**. Featuring responsive third-person combat, selectable animated 3D characters, tactical in-world weapon pickups, timed reloads, server-authoritative replication, and an integrated **Voxide Voice AI Assistant** directly in the lobby.
 
 ---
 
 ## 🎮 Game Overview
 
-In **Bang Bang Duo**, players jump into a vibrant 3D arena for fast-paced combat. The game combines responsive movement mechanics with a modular weapon system and seamless networking:
+In **Bang Bang Duo**, players jump into a sci-fi arena for fast-paced, tactical combat. The game combines responsive movement mechanics with a scavenger weapon pickup system and seamless networking:
 
 - **Third-Person Tactical Perspective**: Smooth over-the-shoulder camera with mouse look, pitch clamping, and collision-aware spring arm.
+- **Selectable 3D Characters & Animations**: Play as **Weyzero Codes** or **Ato Codes** with full locomotion and combat animations (Idle, Walk, Sprint, Jump, Aim, Fire, Death) and procedural `SkeletonIK3D` left-hand grip alignment.
+- **Unarmed Spawns & Scavenging Loop**: Players spawn unarmed and must scavenge the arena to pick up weapons from floating, glowing pickup stations.
 - **Dynamic 3D Crosshair Aiming**: Weapons automatically orient toward the exact world point targeted by your crosshair with responsive weapon recoil.
-- **Modular Weapon Arsenal**: Switch between different weapons on the fly, each with custom fire rates, velocities, damage, color profiles, and audio signatures.
-- **Glowing Projectiles & VFX**: Real-time high-speed projectiles with dynamic lighting, trajectory collision detection, and glowing impact spark effects.
+- **Kenney Blaster Kit Arsenal**: 5 distinct modular weapons with unique ballistic behaviors, fire rates, spread, damage, plasma FX, and timed reload cycles.
+- **Interactive 3D Weapon Pickups**: Rotating 3D blaster models with sinusoidal bobbing, glowing omni-lights matching weapon plasma, 3D billboard labels, and network-synchronized respawn timers.
+- **Tactical Timed Reloading**: Configurable reload durations, automatic reload triggers on magazine depletion, and intelligent reload cancellation on weapon switching.
 - **Voice AI Enabled Lobby**: Hands-free lobby management, matchmaking commands, and player configuration powered by the **Voxide Voice Assistant**.
 - **Server-Authoritative Networking**: Clean multiplayer replication using `MultiplayerSpawner` and `MultiplayerSynchronizer`.
+
+---
+
+## 🥋 Character Models & Animation System
+
+Players can select their preferred operative directly from the main lobby menu. Both models feature synchronized networked appearances and complete animation sets:
+
+| Character Model | Visual Profile | Animation Features |
+| :--- | :--- | :--- |
+| **Weyzero Codes** | Sleek Cyber Operative | Full State Machine (Idle, Walk, Run, Jump, Aiming, Firing, Gunplay, Death) |
+| **Ato Codes** | Heavy Tactical Enforcer | Full State Machine with synchronized animations and custom skin textures |
+
+### Procedural Left-Hand Inverse Kinematics (IK)
+To ensure realistic weapon handling across different blaster geometries, characters utilize a procedural `SkeletonIK3D` (`LeftHandIK`) that dynamically solves the left hand's target position to match each weapon's custom forward grip offset.
 
 ---
 
@@ -59,7 +77,7 @@ The lobby features a full-fledged, real-time conversational **Voice AI Assistant
 | **Context Q&A** | *"What is my name?"* / *"Who is connected?"* | State provider inspects live lobby/network status and responds via voice. |
 
 ### 🛡️ Smart Focus Safety & Push-to-Talk
-- **Smart Text Focus Protection**: When the user clicks into any `LineEdit` input field (e.g. typing an IP or nickname), voice capture automatically pauses to prevent background speech or typing noises from firing unintended voice commands.
+- **Smart Text Focus Protection**: When clicking into any `LineEdit` input field (e.g. typing an IP or nickname), voice capture automatically pauses to prevent typing sounds from triggering unintended voice commands.
 - **Push-to-Talk Mode**: Configurable Push-to-Talk integration with visual audio pulse indicators and connection status badges in the lobby menu.
 
 ### 🔑 Environment Setup
@@ -73,15 +91,29 @@ GEMINI_API_KEY="your-gemini-api-key"
 
 ---
 
-## 🔫 Weapon Arsenal
+## 🔫 Weapon Arsenal & Pickups
 
-The game features an extensible, resource-driven weapon architecture (`WeaponData`):
+### 1. Modular Blaster Arsenal
+The game features 5 distinct weapons built on the extensible `WeaponData` resource architecture:
 
-| Weapon | Type | Clip / Reserve | Fire Rate | Speed | Damage | Plasma Visual |
-| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Pulse Blaster** *(Slot 1)* | Balanced Energy Pistol | `30 / 120` | `0.15s` | `95 m/s` | `25` | ⚡ Cyan Core Glow |
-| **Heavy Cannon** *(Slot 2)* | High-Impact Energy Slug | `8 / 32` | `0.45s` | `120 m/s` | `65` | 🔥 Amber Blast |
-| **Plasma Rifle** *(Slot 3)* | Rapid Auto-Fire Rifle | `45 / 180` | `0.09s` | `110 m/s` | `18` | 🟢 Emerald Plasma |
+| Weapon | Shoot Type | Clip / Reserve | Fire Rate | Reload | Speed | Damage | Plasma Visual |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Assault Rifle** *(Slot 1)* | Full Auto | `30 / 120` | `0.14s` | `1.6s` | `115 m/s` | `25` | ⚡ Cyan Core Glow |
+| **Machine Gun** *(Slot 2)* | Full Auto | `60 / 240` | `0.08s` | `2.2s` | `105 m/s` | `14` | 🔶 Amber Plasma |
+| **Burst Rifle** *(Slot 3)* | 3-Round Burst | `30 / 90` | `0.38s` | `1.8s` | `125 m/s` | `22` | 🟢 Emerald Plasma |
+| **Sniper Rifle** *(Slot 4)* | Semi-Auto | `10 / 40` | `0.55s` | `2.0s` | `180 m/s` | `60` | 🟣 Magenta Plasma |
+| **Heavy Sniper** *(Slot 5)* | Bolt Action | `5 / 20` | `1.15s` | `2.5s` | `220 m/s` | `95` | 🔴 Crimson Blast |
+
+### 2. In-World Weapon Pickups
+- **Interactive Visuals**: Floating 3D weapon models rotate slowly with sinusoidal bobbing.
+- **Dynamic Lighting**: Omni-lights match the bullet plasma color of the weapon with high-visibility billboard text labels displaying weapon name and firing mode.
+- **Multiplayer Respawn Sync**: Server-authoritative pickup collection hides the pickup, plays audio SFX, displays an in-game HUD toast, and triggers a synced respawn timer (default: `12.0s`).
+- **Inventory Refill**: Walking over a pickup for a weapon you already possess tops up its magazine and replenishes reserve ammunition.
+
+### 3. Tactical Timed Reload Mechanics
+- **Timed Delays**: Reloading requires a realistic delay (`reload_time`), displayed on the HUD (`RELOADING... [Xs]`).
+- **Automatic Reload**: Depleting a magazine automatically triggers a reload if reserve ammunition is available.
+- **Switch Interruption**: Switching weapons while reloading cancels the reload immediately without refilling ammo. Switching back to an empty magazine weapon cleanly restarts the reload timer.
 
 ---
 
@@ -98,9 +130,7 @@ The game features an extensible, resource-driven weapon architecture (`WeaponDat
 | **Aim & Look** | `Mouse Motion` | — |
 | **Fire Weapon** | `Left Mouse Button` | — |
 | **Reload Weapon** | `R` | — |
-| **Select Pulse Blaster** | `1` | — |
-| **Select Heavy Cannon** | `2` | — |
-| **Select Plasma Rifle** | `3` | — |
+| **Select Weapon Slot 1–5** | `1`, `2`, `3`, `4`, `5` | — |
 | **Cycle Weapon Up/Down** | `Mouse Wheel Up / Down` | — |
 | **Toggle Mouse Capture** | `Escape` | — |
 
@@ -110,44 +140,58 @@ The game features an extensible, resource-driven weapon architecture (`WeaponDat
 
 ```text
 bang-bang-duo/
+├── CHANGELOG.md                      # Detailed version history and release notes
 ├── project.godot                     # Project configuration, inputs & autoloads
 ├── README.md                         # Game documentation & architecture breakdown
 │
 ├── scenes/
 │   ├── main.tscn                     # Root scene managing World and UI lifecycle
 │   ├── player/
-│   │   └── player.tscn               # CharacterBody3D with modular components
+│   │   └── player.tscn               # CharacterBody3D with animations, IK & weapons
 │   ├── projectile/
 │   │   └── bullet.tscn               # High-speed projectile with light & impact FX
+│   ├── weapons/
+│   │   └── weapon_pickup.tscn        # Interactive floating 3D weapon pickup
 │   ├── world/
-│   │   └── world.tscn                # 3D Arena with Spawner, lighting & spawn points
+│   │   ├── map_geometry.tscn         # Modular arena geometry (corridors, rooms, gates)
+│   │   └── world.tscn                # 3D Arena with Spawner, lighting & weapon stations
 │   └── ui/
 │       ├── lobby_menu.tscn           # Host / Join menu, Voice UI & In-game HUD
 │       └── lobby_theme.tres          # Polished UI theme resources
 │
 ├── scripts/
+│   ├── helper/
+│   │   └── ip_helper.gd              # Local IP detection & clipboard utility
 │   ├── network/
 │   │   └── network_manager.gd        # Autoload: Peer lifecycle, connections & RPCs
 │   ├── player/
-│   │   ├── player.gd                 # Root controller & authority distributor
+│   │   ├── player.gd                 # Root controller, model selection & authority
 │   │   ├── player_input.gd           # Local-only input gatherer (WASD, sprint, fire)
 │   │   ├── player_movement.gd        # Physics, velocity, friction & jump math
 │   │   ├── player_camera.gd          # Mouse look, spring arm & 3D aim projection
-│   │   ├── player_weapon_manager.gd  # Weapon inventory, ammo, cooldowns & reload
+│   │   ├── player_weapon_manager.gd  # Inventory, ammo, pickups, cooldowns & reload
 │   │   └── bullet.gd                 # Projectile trajectory & collision spark FX
 │   ├── weapons/
-│   │   └── weapon_data.gd            # Resource definition for custom weapons
+│   │   ├── weapon_data.gd            # Resource definition for custom weapons
+│   │   └── weapon_pickup.gd          # Pickup bobbing, lighting, interaction & respawn
 │   ├── world/
 │   │   └── world.gd                  # Server-side player spawning & despawning
 │   └── ui/
 │       └── lobby_menu.gd             # Menu logic, Voxide integration & HUD updates
+│
+├── tests/
+│   ├── test_runner.gd                # Automated test runner for game systems
+│   └── test_runner.tscn              # Test harness scene
 │
 ├── addons/
 │   ├── dotenv/                       # Environment variable loader (.env)
 │   └── voxide/                       # Voxide Voice AI Assistant runtime & nodes
 │
 └── assets/
-    └── kenney_ui/                    # Audio SFX and graphical assets
+    ├── kenney_blaster-kit/           # 3D weapon models (Blasters, Rifles, Snipers)
+    ├── kenney_ui/                    # Audio SFX and graphical assets
+    ├── map/                          # Modular corridor, room, and gate 3D models
+    └── player_models/                # Weyzero Codes & Ato Codes 3D models and anims
 ```
 
 ---
@@ -159,7 +203,7 @@ bang-bang-duo/
 - **Replication**:
   - `MultiplayerSpawner` automatically instantiates `player.tscn` on all connected clients when spawned by the server.
   - `MultiplayerSynchronizer` syncs `position`, `rotation`, and `velocity` across peers in real-time.
-- **Dynamic Identity**: Players are assigned distinct procedural HSV avatar colors and 3D billboard nametags synced from the lobby.
+- **Dynamic Identity**: Players are assigned distinct procedural HSV avatar colors, character model selections, and 3D billboard nametags synced from the lobby.
 
 ```
 [Client] Click 'Host' or 'Join' (or Speak Command)
@@ -174,20 +218,22 @@ bang-bang-duo/
 [MultiplayerSpawner] Replicates character across all connected peers
        │
        ▼
-[Player] Authority assigned -> Local player handles inputs & camera
+[Player] Authority assigned -> Local player handles inputs, camera & weapon scavenging
 ```
 
 ### 2. Modular Player Component Hierarchy
 ```
 Player (CharacterBody3D)
-├── Visuals (BodyMesh + FaceIndicator)
-│   └── WeaponMount (GunBody + Barrel + EnergyCore + Muzzle)
+├── Visuals
+│   ├── WeyzeroCodes (Mesh + Skeleton3D + LeftHandIK + AnimationTree)
+│   ├── AtoCodes (Mesh + Skeleton3D + LeftHandIK + AnimationTree)
+│   └── WeaponMount (Hand-aligned socket for active Blaster model)
 ├── Nametag (Label3D - Billboard)
 ├── CameraPivot (PlayerCamera)
 │   └── SpringArm3D -> Camera3D
 ├── PlayerInput (PlayerInput)
 ├── PlayerMovement (PlayerMovement)
-├── WeaponManager (PlayerWeaponManager)
+├── WeaponManager (PlayerWeaponManager - Ammo, Inventory, Reload FSM)
 └── MultiplayerSynchronizer
 ```
 
@@ -200,9 +246,9 @@ Player (CharacterBody3D)
 2. Go to **Debug** in the top menu bar.
 3. Select **Customize Run Instances...** and set the count to **2** (or more).
 4. Press **F5** to start.
-5. In **Window 1**: Enter a nickname and click **Host Game** (Port `8910`) or speak *"Host game on port 8910"*.
-6. In **Window 2**: Enter a nickname and click **Join Game** (IP: `127.0.0.1`, Port: `8910`) or speak *"Join server at 127.0.0.1"*.
-7. Both players will spawn in the arena with unique player colors and nametags!
+5. In **Window 1**: Select your character model, enter a nickname, and click **Host Game** (Port `8910`) or speak *"Host game on port 8910"*.
+6. In **Window 2**: Select your character model, enter a nickname, and click **Join Game** (IP: `127.0.0.1`, Port: `8910`) or speak *"Join server at 127.0.0.1"*.
+7. Both players will spawn unarmed in the arena with unique player colors and nametags! Run toward the glowing weapon stations to equip your arsenal.
 
 ### Option 2: Running via Terminal / CLI
 ```bash
@@ -213,29 +259,28 @@ godot --path .
 godot --path .
 ```
 
+### Option 3: Automated Test Runner
+You can verify the game systems headlessly using the integrated test runner:
+```bash
+godot --headless --path . scenes/test_runner.tscn
+```
+
 ---
 
 ## 🛠️ Extending the Game
 
-### Adding a New Weapon
-Create a new `WeaponData` resource or instantiate one programmatically:
+### Adding a New Weapon Pickup to the Arena
+Instantiate a `WeaponPickup` in `world.tscn` or `map_geometry.tscn` and configure its `weapon_id` export property:
 ```gdscript
-var sniper := WeaponData.new()
-sniper.weapon_id = "sniper_rifle"
-sniper.weapon_name = "HEAVY SNIPER"
-sniper.max_ammo = 5
-sniper.reserve_ammo = 20
-sniper.fire_rate = 0.9
-sniper.bullet_speed = 220.0
-sniper.damage = 100.0
-sniper.bullet_color = Color(1.0, 0.2, 0.2) # Red Plasma
-sniper.sfx_pitch = 0.7
-
-weapon_manager.weapons.append(sniper)
+var pickup := preload("res://scenes/weapons/weapon_pickup.tscn").instantiate()
+pickup.weapon_id = "heavy_sniper"
+pickup.position = Vector3(5.0, 0.0, -12.0)
+pickup.respawn_time = 15.0
+add_child(pickup)
 ```
 
 ### Registering New Voice AI Tools
-You can easily expand the voice assistant by adding new `VoxideTool` instances in `lobby_menu.gd`:
+You can expand the voice assistant by adding new `VoxideTool` instances in `lobby_menu.gd`:
 ```gdscript
 var map_tool := VoxideTool.new("change_map", "Change the active arena map.")
 map_tool.parameters = {
@@ -248,6 +293,12 @@ map_tool.handler = func(args: Dictionary) -> Dictionary:
 
 voxide_voice.register_tool(map_tool)
 ```
+
+---
+
+## 📜 Changelog
+
+See the full history of changes in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
