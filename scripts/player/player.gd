@@ -7,6 +7,12 @@ extends CharacterBody3D
 ## Players spawn unarmed and show weapon only when acquired from pickups.
 ## Fully synchronizes locomotion, rotation, equipped weapon, and gunshot FX across all peers.
 
+signal health_changed(current_hp: float, max_hp: float)
+signal player_damaged(amount: float, attacker_id: int)
+
+@export var max_health: float = 100.0
+@export var current_health: float = 100.0
+
 @export var peer_id: int = 1:
 	set(value):
 		peer_id = value
@@ -28,8 +34,10 @@ extends CharacterBody3D
 @onready var movement_component: PlayerMovement = $PlayerMovement
 @onready var camera_pivot: PlayerCamera = $CameraPivot
 @onready var nametag_label: Label3D = $Nametag
+@onready var health_tag_label: Label3D = get_node_or_null("HealthTag")
 @onready var synchronizer: MultiplayerSynchronizer = $MultiplayerSynchronizer
 @onready var weapon_manager: PlayerWeaponManager = get_node_or_null("WeaponManager")
+@onready var mesh_instance: MeshInstance3D = get_node_or_null("Visuals/BodyMesh")
 
 var anim_tree: AnimationTree = null
 var anim_playback: AnimationNodeStateMachinePlayback = null
@@ -37,6 +45,7 @@ var left_hand_ik: SkeletonIK3D = null
 var muzzle: Marker3D = null
 var _current_active_char: Node3D = null
 var _prev_global_pos: Vector3 = Vector3.ZERO
+var _base_material_color: Color = Color.WHITE
 
 const HAND_MOUNT_TRANSFORM := Transform3D(
 	Vector3(0.09297797, -0.036952548, -0.48988742),
@@ -83,7 +92,6 @@ const WEAPON_CONFIGS: Dictionary = {
 	}
 }
 
-
 func _enter_tree() -> void:
 	# Ensure node name determines multiplayer authority if it represents an int ID
 	var id_from_name = str(name).to_int()
@@ -96,6 +104,7 @@ func _ready() -> void:
 	_update_authority()
 	_setup_visuals()
 	_apply_character_model()
+	_update_nametag_display()
 
 	var net = get_node_or_null("/root/NetworkManager")
 	if net:
@@ -259,9 +268,14 @@ func _setup_local_player() -> void:
 	var tree := get_tree()
 	if not tree or not tree.root:
 		return
-	var lobby_menu: Node = tree.root.find_child("LobbyMenu", true, false)
-	if lobby_menu and weapon_manager and lobby_menu.has_method("hook_local_player_weapon"):
-		lobby_menu.hook_local_player_weapon(weapon_manager)
+	var lobby_menu := tree.root.find_child("LobbyMenu", true, false)
+	if lobby_menu:
+		if lobby_menu.has_method("hook_local_player"):
+			lobby_menu.hook_local_player(self)
+		elif weapon_manager and lobby_menu.has_method("hook_local_player_weapon"):
+			lobby_menu.hook_local_player_weapon(weapon_manager)
+	
+	health_changed.emit(current_health, max_health)
 
 
 func _update_authority() -> void:
@@ -270,20 +284,34 @@ func _update_authority() -> void:
 
 
 func _setup_visuals() -> void:
-	if not is_inside_tree():
-		return
-	var net = get_node_or_null("/root/NetworkManager")
-	var player_name: String = net.get_player_name(peer_id) if net else ("Player %d" % peer_id)
+	# Apply a distinctive color based on peer_id
+	var hue = fmod(float(peer_id) * 0.381966, 1.0) # Golden ratio distribution for pleasant distinct colors
+	_base_material_color = Color.from_hsv(hue, 0.75, 0.95)
+	
+	if mesh_instance:
+		var mat = StandardMaterial3D.new()
+		mat.albedo_color = _base_material_color
+		mesh_instance.material_override = mat
+
+	_update_nametag_display()
+
+
+func _update_nametag_display() -> void:
+	var player_name := NetworkManager.get_player_name(peer_id)
 	if nametag_label:
 		nametag_label.text = player_name
+	if health_tag_label:
+		var hp_pct := current_health / maxf(1.0, max_health)
+		var hp_color_hex := "34d399" if hp_pct > 0.55 else ("fbbf24" if hp_pct > 0.25 else "f87171")
+		health_tag_label.text = "%d / %d" % [int(current_health), int(max_health)]
+		health_tag_label.modulate = Color.from_string(hp_color_hex, Color.WHITE)
 
 
 func _on_network_player_connected(connected_id: int, _info: Dictionary) -> void:
 	if not is_inside_tree():
 		return
-	var net = get_node_or_null("/root/NetworkManager")
-	if connected_id == peer_id and nametag_label and net:
-		nametag_label.text = net.get_player_name(peer_id)
+	if connected_id == peer_id:
+		_update_nametag_display()
 
 
 func _on_weapon_changed(w: WeaponData) -> void:
@@ -317,6 +345,100 @@ func _on_reload_cancelled(_w: WeaponData) -> void:
 		var mount = bone_att.get_node_or_null("WeaponMount") if bone_att else null
 		if mount:
 			mount.position.y = HAND_MOUNT_TRANSFORM.origin.y
+
+
+## Entry point for taking damage. Triggers replicated RPC across all peers.
+func take_damage(amount: float, attacker_id: int = 0, hit_dir: Vector3 = Vector3.ZERO, hit_pos: Vector3 = Vector3.ZERO) -> void:
+	if multiplayer.has_multiplayer_peer():
+		apply_hit_rpc.rpc(amount, attacker_id, hit_dir, hit_pos)
+	else:
+		apply_hit_rpc(amount, attacker_id, hit_dir, hit_pos)
+
+
+## Network-replicated damage handler executed on all connected clients.
+@rpc("any_peer", "call_local", "reliable")
+func apply_hit_rpc(amount: float, attacker_id: int, hit_dir: Vector3, hit_pos: Vector3) -> void:
+	var old_hp := current_health
+	current_health = maxf(0.0, current_health - amount)
+	_update_nametag_display()
+	health_changed.emit(current_health, max_health)
+	player_damaged.emit(amount, attacker_id)
+
+	# 1. Physical Impact Knockback
+	if hit_dir.length_squared() > 0.001:
+		var impulse := hit_dir.normalized() * (amount * 0.35) + Vector3(0, 1.8, 0)
+		velocity += impulse
+		if is_multiplayer_authority() and CodeLogicBus:
+			CodeLogicBus.trace_exec("PHYSICS", "apply_knockback()", "impulse:(%.1f, %.1f, %.1f) | vel:(%.1f, %.1f, %.1f)" % [
+				impulse.x, impulse.y, impulse.z, velocity.x, velocity.y, velocity.z
+			], "#c084fc")
+
+	# 2. Visual & Audio Hit Feedback on all peers
+	_play_hit_feedback(hit_pos, hit_dir)
+
+	# 3. Stream to Code Logic Visualizer
+	if CodeLogicBus:
+		var status_str := "ALIVE" if current_health > 0.0 else "DEAD"
+		CodeLogicBus.trace_cond("COMBAT", "take_damage(%.1f, attacker:%d)" % [amount, attacker_id], true, "hp:%.0f->%.0f [%s]" % [old_hp, current_health, status_str])
+
+	# 4. Death and Respawn Handling
+	if current_health <= 0.0:
+		if not multiplayer.has_multiplayer_peer() or multiplayer.is_server():
+			var spawn_pos := _get_respawn_position()
+			if multiplayer.has_multiplayer_peer():
+				respawn_rpc.rpc(spawn_pos)
+			else:
+				respawn_rpc(spawn_pos)
+
+
+func _play_hit_feedback(hit_pos: Vector3, hit_dir: Vector3) -> void:
+	# Mesh Flash Red
+	if mesh_instance:
+		var flash_mat := StandardMaterial3D.new()
+		flash_mat.albedo_color = Color(1.0, 0.15, 0.15)
+		mesh_instance.material_override = flash_mat
+		var tw := create_tween()
+		tw.tween_interval(0.12)
+		tw.tween_callback(func():
+			var orig_mat := StandardMaterial3D.new()
+			orig_mat.albedo_color = _base_material_color
+			mesh_instance.material_override = orig_mat
+		)
+
+	# Hit impact spark effect
+	if hit_pos.length_squared() > 0.001 and is_inside_tree():
+		var spark := MeshInstance3D.new()
+		var sphere := SphereMesh.new()
+		sphere.radius = 0.15
+		sphere.height = 0.3
+		spark.mesh = sphere
+		var spark_mat := StandardMaterial3D.new()
+		spark_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		spark_mat.albedo_color = Color(1.0, 0.3, 0.1)
+		spark.material_override = spark_mat
+		spark.position = to_local(hit_pos)
+		add_child(spark)
+		var spark_tw := create_tween()
+		spark_tw.tween_property(spark, "scale", Vector3.ZERO, 0.25).set_trans(Tween.TRANS_CUBIC)
+		spark_tw.tween_callback(spark.queue_free)
+
+
+@rpc("call_local", "reliable")
+func respawn_rpc(spawn_pos: Vector3) -> void:
+	current_health = max_health
+	global_position = spawn_pos
+	velocity = Vector3.ZERO
+	_update_nametag_display()
+	health_changed.emit(current_health, max_health)
+	if CodeLogicBus:
+		CodeLogicBus.trace_exec("RESPAWN", "respawn_rpc()", "pos:(%.1f, %.1f, %.1f) | hp:100/100" % [
+			spawn_pos.x, spawn_pos.y, spawn_pos.z
+		], "#34d399")
+
+
+func _get_respawn_position() -> Vector3:
+	var angle := float(randi() % 8) * 0.785398
+	return Vector3(cos(angle) * 5.0, 1.0, sin(angle) * 5.0)
 
 
 func _physics_process(delta: float) -> void:
@@ -442,9 +564,10 @@ func _spawn_bullet(from_pos: Vector3, to_pos: Vector3, weapon: WeaponData = null
 	var spd: float = weapon.bullet_speed if weapon else 95.0
 	var col: Color = weapon.bullet_color if weapon else Color(0.0, 1.0, 0.95)
 	if bullet.has_method("setup"):
-		bullet.setup(from_pos, to_pos, get_rid(), spd, col)
+		var dmg: float = weapon.damage if weapon else 25.0
+		bullet.setup(from_pos, to_pos, get_rid(), spd, col, dmg, peer_id)
 		if CodeLogicBus:
-			CodeLogicBus.trace_exec("BALLISTICS", "_spawn_bullet()", "speed:%.1fm/s | aim:(%.1f, %.1f, %.1f)" % [spd, to_pos.x, to_pos.y, to_pos.z], "#38bdf8")
+			CodeLogicBus.trace_exec("BALLISTICS", "_spawn_bullet()", "speed:%.1fm/s | dmg:%.1f | aim:(%.1f, %.1f, %.1f)" % [spd, dmg, to_pos.x, to_pos.y, to_pos.z], "#38bdf8")
 
 
 func _play_shoot_sound(weapon: WeaponData = null) -> void:

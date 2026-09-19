@@ -12,14 +12,18 @@ extends Node3D
 var direction: Vector3 = Vector3.FORWARD
 var target_point: Vector3 = Vector3.ZERO
 var shooter_rid: RID
+var damage: float = 25.0
+var shooter_peer_id: int = 0
 var _traveled_dist: float = 0.0
 var _max_dist: float = 150.0
 var _lifetime: float = 0.0
 
-func setup(start_pos: Vector3, target_pos: Vector3, exclude_rid: RID = RID(), bullet_speed: float = 95.0, col: Color = Color(0.0, 1.0, 0.95)) -> void:
+func setup(start_pos: Vector3, target_pos: Vector3, exclude_rid: RID = RID(), bullet_speed: float = 95.0, col: Color = Color(0.0, 1.0, 0.95), bullet_damage: float = 25.0, sender_peer_id: int = 0) -> void:
 	speed = bullet_speed
 	bullet_color = col
-	position = start_pos
+	damage = bullet_damage
+	shooter_peer_id = sender_peer_id
+	global_position = start_pos
 	target_point = target_pos
 	shooter_rid = exclude_rid
 	_max_dist = start_pos.distance_to(target_pos)
@@ -59,6 +63,11 @@ func _physics_process(delta: float) -> void:
 
 	var hit := space_state.intersect_ray(query)
 	if not hit.is_empty():
+		var collider = hit.collider
+		if collider and collider.has_method("take_damage"):
+			collider.take_damage(damage, shooter_peer_id, direction, hit.position)
+			if CodeLogicBus:
+				CodeLogicBus.trace_exec("BALLISTICS", "raycast_hit(Player)", "target:%s | dmg:%.1f" % [str(collider.name), damage], "#f87171")
 		_impact(hit.position, hit.normal)
 		return
 

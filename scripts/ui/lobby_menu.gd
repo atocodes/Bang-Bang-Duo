@@ -341,7 +341,23 @@ func _voice_cmd_set_name(new_name: String) -> void:
 		_on_name_changed(new_name)
 
 
-# --- In-Game Weapon Hooking ---
+# --- In-Game Player & Weapon Hooking ---
+func hook_local_player(p: Player) -> void:
+	if not p:
+		return
+	if p.weapon_manager:
+		hook_local_player_weapon(p.weapon_manager)
+	if not p.health_changed.is_connected(_on_player_health_changed):
+		p.health_changed.connect(_on_player_health_changed)
+	_on_player_health_changed(p.current_health, p.max_health)
+
+
+func _on_player_health_changed(cur_hp: float, max_hp: float) -> void:
+	if hud_player_name:
+		var base_name := NetworkManager.local_player_name
+		hud_player_name.text = "%s [HP: %d/%d]" % [base_name, int(cur_hp), int(max_hp)]
+
+
 func hook_local_player_weapon(wm: PlayerWeaponManager) -> void:
 	if _hooked_weapon_manager and is_instance_valid(_hooked_weapon_manager):
 		if _hooked_weapon_manager.weapon_changed.is_connected(_on_weapon_changed):

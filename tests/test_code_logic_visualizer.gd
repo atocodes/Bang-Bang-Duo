@@ -61,10 +61,25 @@ func _ready() -> void:
 	# Movement physics trace
 	p.input_component.move_direction = Vector2(0, -1)
 	p.movement_component.process_movement(0.016, Basis.IDENTITY)
-	p.queue_free()
 	print("PASS: 4. Player movement and weapon gameplay trace hooks verified.")
 
-	# 5. Test Performance Toggle & Instant Bypass
+	# 5. Test Health & Damage Impact Mechanics
+	assert(p.current_health == 100.0, "Player must start at 100 HP")
+	p.take_damage(25.0, 1, Vector3.FORWARD, Vector3(0, 1, 0))
+	assert(p.current_health == 75.0, "Player health must be 75 after 25 damage")
+	var dmg_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
+	assert("take_damage" in dmg_entry.code, "Damage trace must be recorded in CodeLogicDock")
+	assert("75" in dmg_entry.code, "Updated HP (75) must appear in trace")
+
+	# Test fatal damage & respawn
+	p.take_damage(100.0, 1, Vector3.ZERO, Vector3.ZERO)
+	assert(p.current_health == 100.0, "Player must respawn with full 100 health")
+	var respawn_entry = dock._entries[CodeLogicDockScript.MAX_VISIBLE_LINES - 1]
+	assert("respawn" in respawn_entry.code or "100" in respawn_entry.code, "Respawn trace must be recorded")
+	p.queue_free()
+	print("PASS: 5. Health system, damage impact knockback, and respawn logic flow verified.")
+
+	# 6. Test Performance Toggle & Instant Bypass
 	dock.toggle_dock()
 	assert(dock.visible == false, "Dock should be hidden after toggle")
 	assert(CodeLogicBus.is_enabled == false, "CodeLogicBus should be disabled when dock is hidden")
@@ -75,7 +90,7 @@ func _ready() -> void:
 	dock.toggle_dock()
 	assert(dock.visible == true, "Dock restored to visible")
 	assert(CodeLogicBus.is_enabled == true, "CodeLogicBus re-enabled")
-	print("PASS: 5. High-performance toggle and zero-cost bypass verified.")
+	print("PASS: 6. High-performance toggle and zero-cost bypass verified.")
 
 	print("==================================================")
 	print("ALL CODE LOGIC DOCK TESTS PASSED SUCCESSFULLY!")
