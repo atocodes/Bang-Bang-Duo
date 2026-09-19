@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://cmbn8q2k0i6my"]
 
-[ext_resource type="Script" path="res://scripts/world/world.gd" id="1_world"]
+[ext_resource type="Script" uid="uid://bvq7u5ueij73f" path="res://scripts/world/world.gd" id="1_world"]
+[ext_resource type="PackedScene" uid="uid://6i5h3gpi671w" path="res://scenes/world/map_geometry.tscn" id="2_sl2e5"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.384314, 0.454902, 0.54902, 1)
@@ -17,106 +18,34 @@ sky = SubResource("Sky_1")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.22, 0.24, 0.28, 1)
-roughness = 0.8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_obstacle"]
-albedo_color = Color(0.35, 0.45, 0.65, 1)
-roughness = 0.5
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_accent"]
-albedo_color = Color(0.85, 0.45, 0.25, 1)
-roughness = 0.4
-
-[node name="World" type="Node3D"]
+[node name="World" type="Node3D" unique_id=1407189532]
 script = ExtResource("1_world")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1338727792]
 environment = SubResource("Environment_1")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1858980723]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 10, 0)
 shadow_enabled = true
 
-[node name="MenuCamera" type="Camera3D" parent="."]
-transform = Transform3D(0.92388, -0.191342, 0.331414, 0, 0.866025, 0.5, -0.382683, -0.46194, 0.800103, 9, 8.5, 15)
-current = true
-fov = 65.0
+[node name="MapGeometry" parent="." unique_id=1013313294 instance=ExtResource("2_sl2e5")]
 
-[node name="MapGeometry" type="Node3D" parent="."]
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1914753944]
 
-[node name="MainFloor" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-use_collision = true
-size = Vector3(40, 1, 40)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="BorderWall_N" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -20)
-use_collision = true
-size = Vector3(40, 3, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="BorderWall_S" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 20)
-use_collision = true
-size = Vector3(40, 3, 1)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="BorderWall_E" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.5, 0)
-use_collision = true
-size = Vector3(1, 3, 40)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="BorderWall_W" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 1.5, 0)
-use_collision = true
-size = Vector3(1, 3, 40)
-material = SubResource("StandardMaterial3D_floor")
-
-[node name="CenterPillar" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
-use_collision = true
-size = Vector3(4, 3, 4)
-material = SubResource("StandardMaterial3D_obstacle")
-
-[node name="Platform1" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 8)
-use_collision = true
-size = Vector3(4, 2, 4)
-material = SubResource("StandardMaterial3D_accent")
-
-[node name="Platform2" type="CSGBox3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, -8)
-use_collision = true
-size = Vector3(5, 3, 5)
-material = SubResource("StandardMaterial3D_accent")
-
-[node name="Ramp" type="CSGPolygon3D" parent="MapGeometry"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -8)
-use_collision = true
-polygon = PackedVector2Array(0, 0, 6, 2, 6, 0)
-depth = 3.0
-material = SubResource("StandardMaterial3D_obstacle")
-
-[node name="SpawnPoints" type="Node3D" parent="."]
-
-[node name="SpawnPoint1" type="Marker3D" parent="SpawnPoints"]
+[node name="SpawnPoint1" type="Marker3D" parent="SpawnPoints" unique_id=1775652098]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, -6)
 
-[node name="SpawnPoint2" type="Marker3D" parent="SpawnPoints"]
+[node name="SpawnPoint2" type="Marker3D" parent="SpawnPoints" unique_id=645940221]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, 6)
 
-[node name="SpawnPoint3" type="Marker3D" parent="SpawnPoints"]
+[node name="SpawnPoint3" type="Marker3D" parent="SpawnPoints" unique_id=1279930307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 6)
 
-[node name="SpawnPoint4" type="Marker3D" parent="SpawnPoints"]
+[node name="SpawnPoint4" type="Marker3D" parent="SpawnPoints" unique_id=779315721]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -6)
 
-[node name="Players" type="Node3D" parent="."]
+[node name="Players" type="Node3D" parent="." unique_id=309532107]
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=2107556555]
 _spawnable_scenes = PackedStringArray("res://scenes/player/player.tscn")
 spawn_path = NodePath("../Players")
