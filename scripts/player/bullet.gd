@@ -78,6 +78,9 @@ func _impact(pos: Vector3, normal: Vector3) -> void:
 	set_physics_process(false)
 	global_position = pos
 
+	if CodeLogicBus:
+		CodeLogicBus.trace_exec("IMPACT", "intersect_ray() -> hit", "pos:(%.1f, %.1f, %.1f)" % [pos.x, pos.y, pos.z], "#f87171")
+
 	var bullet_mesh := get_node_or_null("Mesh") as MeshInstance3D
 	if bullet_mesh:
 		bullet_mesh.visible = false

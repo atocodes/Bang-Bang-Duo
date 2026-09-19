@@ -396,26 +396,16 @@ func _execute_single_shot(fired_weapon: WeaponData) -> void:
 	if anim_tree:
 		anim_tree.set("parameters/shoot_shot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 
-	var base_aim_point: Vector3 = camera_pivot.get_aim_point(150.0)
+	var aim_point: Vector3 = camera_pivot.get_aim_point(150.0)
 	var shoot_origin: Vector3 = (
 		muzzle.global_position if muzzle and is_instance_valid(muzzle)
 		else (global_position + global_transform.basis * Vector3(0.36, 0.88, -0.6))
 	)
-
-	# Apply spread if configured on weapon
-	var final_aim_point := base_aim_point
-	if fired_weapon and fired_weapon.spread_degrees > 0.0:
-		var dist = shoot_origin.distance_to(base_aim_point)
-		var spread_rad = deg_to_rad(fired_weapon.spread_degrees)
-		var spread_offset = Vector3(
-			randf_range(-1.0, 1.0),
-			randf_range(-1.0, 1.0),
-			0.0
-		).normalized() * tan(spread_rad) * dist * randf_range(0.2, 1.0)
-		final_aim_point += camera_pivot.global_transform.basis * spread_offset
-
-	# Spawn bullet projectile directly aligned with target
-	_spawn_bullet(shoot_origin, final_aim_point, fired_weapon)
+	
+	# Spawn bullet projectile directly aligned with crosshair aim target
+	_spawn_bullet(shoot_origin, aim_point, fired_weapon)
+	if CodeLogicBus:
+		CodeLogicBus.trace_cond("COMBAT", "is_firing and can_fire()", true, "w:'%s'" % fired_weapon.weapon_name)
 
 	# Audio feedback
 	_play_shoot_sound(fired_weapon)
@@ -432,7 +422,7 @@ func _execute_single_shot(fired_weapon: WeaponData) -> void:
 
 	# Broadcast shot to all other multiplayer peers
 	if multiplayer.has_multiplayer_peer():
-		_rpc_remote_shoot.rpc(shoot_origin, final_aim_point, fired_weapon.weapon_id if fired_weapon else "")
+		_rpc_remote_shoot.rpc(shoot_origin, aim_point, fired_weapon.weapon_id if fired_weapon else "")
 
 
 @rpc("any_peer", "call_remote", "unreliable")
@@ -453,7 +443,8 @@ func _spawn_bullet(from_pos: Vector3, to_pos: Vector3, weapon: WeaponData = null
 	var col: Color = weapon.bullet_color if weapon else Color(0.0, 1.0, 0.95)
 	if bullet.has_method("setup"):
 		bullet.setup(from_pos, to_pos, get_rid(), spd, col)
-	get_tree().root.add_child.call_deferred(bullet)
+		if CodeLogicBus:
+			CodeLogicBus.trace_exec("BALLISTICS", "_spawn_bullet()", "speed:%.1fm/s | aim:(%.1f, %.1f, %.1f)" % [spd, to_pos.x, to_pos.y, to_pos.z], "#38bdf8")
 
 
 func _play_shoot_sound(weapon: WeaponData = null) -> void:

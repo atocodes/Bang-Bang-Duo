@@ -26,6 +26,7 @@ driver/enable_input=true
 
 NetworkManager="*res://scripts/network/network_manager.gd"
 DotEnv="*uid://dfoeh5novf76"
+CodeLogicBus="*res://scripts/debug/code_logic_bus.gd"
 
 [display]
 

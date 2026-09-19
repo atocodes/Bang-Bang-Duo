@@ -139,18 +139,17 @@ func switch_weapon(index: int) -> void:
 	current_index = index
 	var cur := get_current_weapon()
 	weapon_changed.emit(cur)
-	if cur:
-		ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
-		# If the newly selected weapon has 0 ammo in clip and has reserve,
-		# start reload from the beginning!
-		if cur.current_ammo == 0 and cur.reserve_ammo > 0 and not cur.is_infinite:
-			start_reload(cur)
+	ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+	if CodeLogicBus and cur:
+		CodeLogicBus.trace_exec("WEAPON", "switch_weapon(slot:%d)" % index, "equipped:'%s' | ammo:%d/%d" % [cur.weapon_name, cur.current_ammo, cur.reserve_ammo], "#a78bfa")
 
 
 func cycle_weapon(delta: int) -> void:
 	if weapons.size() <= 1:
 		return
 	var new_index = posmod(current_index + delta, weapons.size())
+	if CodeLogicBus:
+		CodeLogicBus.trace_exec("WEAPON", "cycle_weapon(%+d)" % delta, "slot:%d -> %d" % [current_index, new_index], "#a78bfa")
 	switch_weapon(new_index)
 
 
@@ -165,30 +164,18 @@ func can_fire() -> bool:
 
 func fire() -> WeaponData:
 	var cur := get_current_weapon()
-	if not cur:
-		return null
-
-	if is_reloading:
-		return null
-
-	if cur.current_ammo <= 0:
-		# Auto reload on empty if reserve is available
-		if cur.reserve_ammo > 0 and not is_reloading:
-			start_reload(cur)
-		return null
-
-	if _cooldown_timer > 0.0:
+	if not cur or not can_fire():
+		if CodeLogicBus:
+			var reason := "cooldown:%.2fs" % _cooldown_timer if _cooldown_timer > 0.0 else "no_ammo"
+			CodeLogicBus.trace_cond("WEAPON", "can_fire()", false, reason)
 		return null
 	
 	cur.consume_ammo()
 	_cooldown_timer = cur.fire_rate
 	weapon_fired.emit(cur)
 	ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
-
-	# If the shot exhausted the magazine, immediately trigger reload with timer!
-	if cur.current_ammo == 0 and cur.reserve_ammo > 0 and not cur.is_infinite:
-		start_reload(cur)
-
+	if CodeLogicBus:
+		CodeLogicBus.trace_exec("WEAPON", "fire('%s')" % cur.weapon_name, "ammo:%d/%d | cd:%.2fs" % [cur.current_ammo, cur.reserve_ammo, cur.fire_rate], "#34d399")
 	return cur
 
 
@@ -234,90 +221,12 @@ func finish_reload() -> void:
 
 func reload_current() -> void:
 	var cur := get_current_weapon()
-	if cur and not is_reloading:
-		if cur.current_ammo < cur.max_ammo and cur.reserve_ammo > 0:
-			start_reload(cur)
-
-
-## Utility factory for creating full weapon instances by ID
-static func create_weapon_by_id(id: String) -> WeaponData:
-	var w := WeaponData.new()
-	match id:
-		"machine_gun":
-			w.weapon_id = "machine_gun"
-			w.weapon_name = "MACHINE GUN"
-			w.shoot_type = "FULL AUTO"
-			w.max_ammo = 60
-			w.current_ammo = 60
-			w.reserve_ammo = 240
-			w.fire_rate = 0.08
-			w.reload_time = 2.2
-			w.bullet_speed = 105.0
-			w.damage = 14.0
-			w.bullet_color = Color(1.0, 0.65, 0.15)
-			w.sfx_pitch = 1.45
-			w.spread_degrees = 2.2
-			w.model_name = "MachineGun"
-		"burst_rifle":
-			w.weapon_id = "burst_rifle"
-			w.weapon_name = "BURST RIFLE"
-			w.shoot_type = "3-ROUND BURST"
-			w.max_ammo = 30
-			w.current_ammo = 30
-			w.reserve_ammo = 90
-			w.fire_rate = 0.38
-			w.reload_time = 1.8
-			w.burst_count = 3
-			w.burst_interval = 0.06
-			w.bullet_speed = 125.0
-			w.damage = 22.0
-			w.bullet_color = Color(0.2, 1.0, 0.4)
-			w.sfx_pitch = 1.35
-			w.spread_degrees = 0.8
-			w.model_name = "Rifile2"
-		"sniper_rifle":
-			w.weapon_id = "sniper_rifle"
-			w.weapon_name = "SNIPER RIFLE"
-			w.shoot_type = "SEMI-AUTO"
-			w.max_ammo = 10
-			w.current_ammo = 10
-			w.reserve_ammo = 40
-			w.fire_rate = 0.55
-			w.reload_time = 2.0
-			w.bullet_speed = 180.0
-			w.damage = 60.0
-			w.bullet_color = Color(0.95, 0.2, 0.85)
-			w.sfx_pitch = 0.85
-			w.spread_degrees = 0.0
-			w.model_name = "Sniper"
-		"heavy_sniper":
-			w.weapon_id = "heavy_sniper"
-			w.weapon_name = "HEAVY SNIPER"
-			w.shoot_type = "BOLT ACTION"
-			w.max_ammo = 5
-			w.current_ammo = 5
-			w.reserve_ammo = 20
-			w.fire_rate = 1.15
-			w.reload_time = 2.5
-			w.bullet_speed = 220.0
-			w.damage = 95.0
-			w.bullet_color = Color(1.0, 0.25, 0.1)
-			w.sfx_pitch = 0.65
-			w.spread_degrees = 0.0
-			w.model_name = "Sniper1"
-		_:
-			w.weapon_id = "rifle"
-			w.weapon_name = "ASSAULT RIFLE"
-			w.shoot_type = "FULL AUTO"
-			w.max_ammo = 30
-			w.current_ammo = 30
-			w.reserve_ammo = 120
-			w.fire_rate = 0.14
-			w.reload_time = 1.6
-			w.bullet_speed = 115.0
-			w.damage = 25.0
-			w.bullet_color = Color(0.1, 0.9, 1.0)
-			w.sfx_pitch = 1.25
-			w.spread_degrees = 0.5
-			w.model_name = "Rifile"
-	return w
+	if not cur:
+		return
+	var reloaded := cur.reload()
+	if reloaded:
+		ammo_changed.emit(cur.current_ammo, cur.reserve_ammo, cur.is_infinite)
+		if CodeLogicBus:
+			CodeLogicBus.trace_exec("WEAPON", "reload_current('%s')" % cur.weapon_name, "ammo:%d/%d [RELOADED]" % [cur.current_ammo, cur.reserve_ammo], "#fbbf24")
+	elif CodeLogicBus:
+		CodeLogicBus.trace_cond("WEAPON", "reload('%s')" % cur.weapon_name, false, "full_or_empty_reserve")

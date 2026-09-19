@@ -53,6 +53,10 @@ extends Control
 # --- Settings Panel Controls ---
 @onready var settings_back_button: Button = $CenterArea/SettingsPanel/VBox/SettingsBackButton
 
+# --- Character Selection Controls ---
+@onready var weyzero_btn: Button = get_node_or_null("CenterArea/MenuButtonsPanel/VBox/CharacterSelection/WeyzeroBtn")
+@onready var ato_btn: Button = get_node_or_null("CenterArea/MenuButtonsPanel/VBox/CharacterSelection/AtoBtn")
+
 # --- In-Game HUD (4 Corners) ---
 @onready var hud_panel: Control = $HUD
 @onready var hud_player_name: Label = $HUD/TopLeftCard/Panel/VBox/PlayerNameLabel
@@ -68,6 +72,7 @@ extends Control
 
 var _toast_tween: Tween = null
 var _hooked_weapon_manager: PlayerWeaponManager = null
+var _toast_tween: Tween = null
 
 var _current_panel: Control
 var _detected_ip: String = "127.0.0.1"

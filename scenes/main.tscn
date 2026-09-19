@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://b6tucjlprhnfd"]
+[gd_scene format=3 uid="uid://cdbuwhgp626v"]
 
-[ext_resource type="PackedScene" path="res://scenes/world/world.tscn" id="1_world"]
-[ext_resource type="PackedScene" path="res://scenes/ui/lobby_menu.tscn" id="2_ui"]
+[ext_resource type="PackedScene" uid="uid://bbn2xkbnpuain" path="res://scenes/world/world.tscn" id="1_world"]
+[ext_resource type="PackedScene" uid="uid://bqq2qklmfjqdo" path="res://scenes/ui/lobby_menu.tscn" id="2_ui"]
+[ext_resource type="PackedScene" uid="uid://b8yqud71s8e2b" path="res://scenes/ui/code_logic_dock.tscn" id="3_dock"]
 
 [node name="Main" type="Node" unique_id=1850840322]
 
@@ -10,3 +11,5 @@
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1013390413]
 
 [node name="LobbyMenu" parent="CanvasLayer" unique_id=2474992 instance=ExtResource("2_ui")]
+
+[node name="CodeLogicDock" parent="CanvasLayer" unique_id=31415926 instance=ExtResource("3_dock")]
