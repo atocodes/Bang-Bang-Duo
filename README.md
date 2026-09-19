@@ -6,7 +6,7 @@
 [![Voice AI](https://img.shields.io/badge/AI-Voxide_Voice-8A2BE2)](https://github.com/atocodes/voxide)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Bang Bang Duo** is a fast-paced, modular 3D multiplayer arena shooter built with **Godot 4**, **GDScript**, **Jolt 3D Physics**, and Godot's **High-Level Multiplayer API**. Featuring responsive third-person combat, multi-weapon arsenals, server-authoritative replication, and integrated **Voxide Voice AI Assistant** support.
+**Bang Bang Duo** is a fast-paced, modular 3D multiplayer arena shooter built with **Godot 4**, **GDScript**, **Jolt 3D Physics**, and Godot's **High-Level Multiplayer API**. Featuring responsive third-person combat, multi-weapon arsenals, server-authoritative replication, and an integrated **Voxide Voice AI Assistant** directly in the lobby.
 
 ---
 
@@ -17,9 +17,59 @@ In **Bang Bang Duo**, players jump into a vibrant 3D arena for fast-paced combat
 - **Third-Person Tactical Perspective**: Smooth over-the-shoulder camera with mouse look, pitch clamping, and collision-aware spring arm.
 - **Dynamic 3D Crosshair Aiming**: Weapons automatically orient toward the exact world point targeted by your crosshair with responsive weapon recoil.
 - **Modular Weapon Arsenal**: Switch between different weapons on the fly, each with custom fire rates, velocities, damage, color profiles, and audio signatures.
-- **Glowing Projectiles & FX**: Real-time high-speed projectiles with dynamic lighting, trajectory collision detection, and glowing impact spark effects.
-- **Voice AI Enabled Lobby**: Hands-free lobby management and server operations powered by Voxide AI.
+- **Glowing Projectiles & VFX**: Real-time high-speed projectiles with dynamic lighting, trajectory collision detection, and glowing impact spark effects.
+- **Voice AI Enabled Lobby**: Hands-free lobby management, matchmaking commands, and player configuration powered by the **Voxide Voice Assistant**.
 - **Server-Authoritative Networking**: Clean multiplayer replication using `MultiplayerSpawner` and `MultiplayerSynchronizer`.
+
+---
+
+## 🎙️ Voxide Voice Assistant (Lobby AI)
+
+The lobby features a full-fledged, real-time conversational **Voice AI Assistant** powered by [Voxide](https://github.com/atocodes/voxide). Players can configure their profile, host servers, and join games entirely hands-free using natural spoken commands.
+
+```
+       ┌───────────────────────────────┐
+       │   Player Speaks into Mic      │
+       └──────────────┬────────────────┘
+                      ▼
+       ┌───────────────────────────────┐
+       │     Voxide Voice Runtime      │
+       └──────────────┬────────────────┘
+                      ▼
+         ┌────────────────────────────┐
+         │ Tool Dispatch & Execution  │
+         ├────────────────────────────┤
+         │ • host_game(port)          │
+         │ • join_game(ip, port)      │
+         │ • set_player_name(name)    │
+         └────────────┬───────────────┘
+                      ▼
+       ┌───────────────────────────────┐
+       │   Lobby Menu & NetworkManager │
+       └───────────────────────────────┘
+```
+
+### 🗣️ Supported Voice Commands & Tools
+
+| Voice Tool | Spoken Example | Action Executed |
+| :--- | :--- | :--- |
+| `host_game` | *"Host a game on port 8910"* | Starts server hosting on specified port and transitions into arena. |
+| `join_game` | *"Join server at 127.0.0.1 on port 8910"* | Connects client to target server IP/port. |
+| `set_player_name` | *"Change my name to CyberViper"* | Updates local nickname, UI input, and synced 3D billboard nametag. |
+| **Context Q&A** | *"What is my name?"* / *"Who is connected?"* | State provider inspects live lobby/network status and responds via voice. |
+
+### 🛡️ Smart Focus Safety & Push-to-Talk
+- **Smart Text Focus Protection**: When the user clicks into any `LineEdit` input field (e.g. typing an IP or nickname), voice capture automatically pauses to prevent background speech or typing noises from firing unintended voice commands.
+- **Push-to-Talk Mode**: Configurable Push-to-Talk integration with visual audio pulse indicators and connection status badges in the lobby menu.
+
+### 🔑 Environment Setup
+The Voice AI uses your API key configured in `.env` via the `DotEnv` autoload:
+```ini
+# .env file in project root
+VOXIDE_API_KEY="your-voxide-api-key"
+# or
+GEMINI_API_KEY="your-gemini-api-key"
+```
 
 ---
 
@@ -92,6 +142,10 @@ bang-bang-duo/
 │   └── ui/
 │       └── lobby_menu.gd             # Menu logic, Voxide integration & HUD updates
 │
+├── addons/
+│   ├── dotenv/                       # Environment variable loader (.env)
+│   └── voxide/                       # Voxide Voice AI Assistant runtime & nodes
+│
 └── assets/
     └── kenney_ui/                    # Audio SFX and graphical assets
 ```
@@ -108,7 +162,7 @@ bang-bang-duo/
 - **Dynamic Identity**: Players are assigned distinct procedural HSV avatar colors and 3D billboard nametags synced from the lobby.
 
 ```
-[Client] Click 'Host' or 'Join' 
+[Client] Click 'Host' or 'Join' (or Speak Command)
        │
        ▼
 [NetworkManager] Sets ENetMultiplayerPeer
@@ -137,13 +191,6 @@ Player (CharacterBody3D)
 └── MultiplayerSynchronizer
 ```
 
-### 3. Voice AI Assistant Integration (Voxide)
-- Integrated voice tools enable players to interact with the game via natural voice commands:
-  - `"Host game on port 8910"`
-  - `"Join server at 192.168.1.5"`
-  - `"Change my name to CyberKnight"`
-- Focus-safety handling ensures push-to-talk does not trigger accidentally when editing text fields.
-
 ---
 
 ## 🚀 How to Play & Test Multiplayer
@@ -153,8 +200,8 @@ Player (CharacterBody3D)
 2. Go to **Debug** in the top menu bar.
 3. Select **Customize Run Instances...** and set the count to **2** (or more).
 4. Press **F5** to start.
-5. In **Window 1**: Enter a nickname and click **Host Game** (Port `8910`).
-6. In **Window 2**: Enter a nickname and click **Join Game** (IP: `127.0.0.1`, Port: `8910`).
+5. In **Window 1**: Enter a nickname and click **Host Game** (Port `8910`) or speak *"Host game on port 8910"*.
+6. In **Window 2**: Enter a nickname and click **Join Game** (IP: `127.0.0.1`, Port: `8910`) or speak *"Join server at 127.0.0.1"*.
 7. Both players will spawn in the arena with unique player colors and nametags!
 
 ### Option 2: Running via Terminal / CLI
@@ -164,11 +211,6 @@ godot --path .
 
 # Terminal 2: Launch Client Instance
 godot --path .
-```
-
-### Option 3: Headless Syntax & Codebase Validation
-```bash
-godot --headless --quit
 ```
 
 ---
@@ -192,14 +234,20 @@ sniper.sfx_pitch = 0.7
 weapon_manager.weapons.append(sniper)
 ```
 
-### Adding Player Health & Combat Damage
-1. Add `@export var health: float = 100.0` to `player.gd`.
-2. Add `health` to the `MultiplayerSynchronizer` replication properties.
-3. In `bullet.gd`, detect when collision hits a `Player` node and call a server-side damage handler:
-   ```gdscript
-   if hit_collider is Player:
-       hit_collider.take_damage.rpc_id(1, damage, shooter_id)
-   ```
+### Registering New Voice AI Tools
+You can easily expand the voice assistant by adding new `VoxideTool` instances in `lobby_menu.gd`:
+```gdscript
+var map_tool := VoxideTool.new("change_map", "Change the active arena map.")
+map_tool.parameters = {
+    "map_name": { "type": "string", "description": "Name of the arena.", "required": true }
+}
+map_tool.handler = func(args: Dictionary) -> Dictionary:
+    var map: String = args.get("map_name", "cyber_arena")
+    # Execute map change logic...
+    return { "status": "success", "map": map }
+
+voxide_voice.register_tool(map_tool)
+```
 
 ---
 
