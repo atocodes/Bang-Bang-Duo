@@ -3,12 +3,13 @@
 [ext_resource type="Script" uid="uid://drd0u4nlldyib" path="res://scripts/ui/lobby_menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" uid="uid://dyo5wcy6wlqoy" path="res://splash-screen.png" id="2_splash"]
 [ext_resource type="FontFile" uid="uid://cjd54nihkwgra" path="res://assets/fonts/Jersey_10/Jersey10-Regular.ttf" id="3_jersey"]
+[ext_resource type="FontFile" uid="uid://d2vnuyvlagqms" path="res://assets/kenney_ui_scifi/PNG/Grey/Double/PhantomGuardiansCoolGamingBold-q2Rlx.otf" id="4_r2toe"]
 [ext_resource type="Script" uid="uid://c4c373c36q34b" path="res://addons/voxide/nodes/voxide_voice.gd" id="4_voice"]
-[ext_resource type="Texture2D" uid="uid://dw5e4oq4pxge3" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_depth_flat.png" id="5_blue_flat"]
-[ext_resource type="Texture2D" uid="uid://guogigpqxj07" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_depth_gloss.png" id="6_blue_gloss"]
-[ext_resource type="Texture2D" uid="uid://bc8uqqbxb6kn5" path="res://assets/kenney_ui/PNG/Blue/Double/button_rectangle_flat.png" id="7_blue_press"]
 [ext_resource type="Texture2D" uid="uid://cyhvfguga55gp" path="res://assets/kenney_ui/PNG/Grey/Double/button_rectangle_depth_flat.png" id="8_grey_flat"]
+[ext_resource type="Texture2D" uid="uid://bhypon4252427" path="res://assets/kenney_ui_scifi/PNG/Grey/Double/bar_square_gloss_large_square.png" id="8_s4y0d"]
+[ext_resource type="Texture2D" uid="uid://bhdhvv0o8racc" path="res://assets/kenney_ui_scifi/PNG/Grey/Double/bar_square_large_square.png" id="9_2pnmv"]
 [ext_resource type="Texture2D" uid="uid://buug2cgcrh0r" path="res://assets/kenney_ui/PNG/Grey/Double/button_rectangle_depth_gloss.png" id="9_grey_gloss"]
+[ext_resource type="Texture2D" uid="uid://r3ff06nnp4oe" path="res://assets/kenney_ui_scifi/PNG/Grey/Double/bar_square_gloss_small_square.png" id="9_r2toe"]
 [ext_resource type="Texture2D" uid="uid://4cbebtsva00j" path="res://assets/kenney_ui/PNG/Grey/Double/button_rectangle_flat.png" id="10_grey_press"]
 [ext_resource type="Texture2D" uid="uid://bol1he31detv8" path="res://assets/kenney_ui/PNG/Red/Double/button_rectangle_depth_flat.png" id="11_red_flat"]
 [ext_resource type="Texture2D" uid="uid://32vormo3inlg" path="res://assets/kenney_ui/PNG/Red/Double/button_rectangle_depth_gloss.png" id="12_red_gloss"]
@@ -27,7 +28,7 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-modulate_color = Color(0.1, 0.16, 0.28, 0.96)
+modulate_color = Color(0.3372549, 0.25490198, 0.03529412, 0.95686275)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_input_box_ui"]
 content_margin_left = 16.0
@@ -39,7 +40,7 @@ texture_margin_left = 12.0
 texture_margin_top = 12.0
 texture_margin_right = 12.0
 texture_margin_bottom = 12.0
-modulate_color = Color(0.1, 0.24, 0.38, 0.98)
+modulate_color = Color(0.3372549, 0.25490198, 0.03529412, 0.95686275)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_grey_norm"]
 content_margin_left = 20.0
@@ -79,33 +80,36 @@ content_margin_left = 20.0
 content_margin_top = 10.0
 content_margin_right = 20.0
 content_margin_bottom = 14.0
-texture = ExtResource("5_blue_flat")
+texture = ExtResource("9_2pnmv")
 texture_margin_left = 14.0
 texture_margin_top = 12.0
 texture_margin_right = 14.0
 texture_margin_bottom = 16.0
+modulate_color = Color(0.811414, 0.6181468, 0.23240775, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_blue_prs"]
 content_margin_left = 20.0
 content_margin_top = 12.0
 content_margin_right = 20.0
 content_margin_bottom = 12.0
-texture = ExtResource("7_blue_press")
+texture = ExtResource("9_r2toe")
 texture_margin_left = 14.0
 texture_margin_top = 12.0
 texture_margin_right = 14.0
 texture_margin_bottom = 16.0
+modulate_color = Color(0.80392057, 0.62532866, 0.13808265, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_blue_hov"]
 content_margin_left = 20.0
 content_margin_top = 10.0
 content_margin_right = 20.0
 content_margin_bottom = 14.0
-texture = ExtResource("6_blue_gloss")
+texture = ExtResource("8_s4y0d")
 texture_margin_left = 14.0
 texture_margin_top = 12.0
 texture_margin_right = 14.0
 texture_margin_bottom = 16.0
+modulate_color = Color(0.8039216, 0.62352943, 0.13725491, 0.6039216)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_red_norm"]
 content_margin_left = 20.0
@@ -150,7 +154,7 @@ texture_margin_left = 16.0
 texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
-modulate_color = Color(0.12, 0.22, 0.36, 0.98)
+modulate_color = Color(0.3354949, 0.25371727, 0.034410454, 0.95686275)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ip_box_ui"]
 content_margin_left = 20.0
@@ -162,7 +166,10 @@ texture_margin_left = 12.0
 texture_margin_top = 12.0
 texture_margin_right = 12.0
 texture_margin_bottom = 12.0
-modulate_color = Color(0.06, 0.28, 0.42, 0.98)
+modulate_color = Color(0.3372549, 0.25490198, 0.03529412, 0.95686275)
+
+[sub_resource type="Theme" id="Theme_r2toe"]
+Label/fonts/font = ExtResource("4_r2toe")
 
 [node name="LobbyMenu" type="Control" unique_id=1100113711]
 layout_mode = 3
@@ -194,9 +201,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.06, 0.09, 0.16, 0.5)
+color = Color(0.3372549, 0.25490198, 0.03529412, 0.5137255)
 
-[node name="CenterArea" type="CenterContainer" parent="." unique_id=1502734259]
+[node name="CenterArea" type="Control" parent="." unique_id=1046136280]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -206,7 +213,18 @@ grow_vertical = 2
 
 [node name="MenuButtonsPanel" type="PanelContainer" parent="CenterArea" unique_id=150146699]
 custom_minimum_size = Vector2(520, 0)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -416.0
+offset_top = -334.0
+offset_right = 416.0
+offset_bottom = 334.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_menu_panel_ui")
 
 [node name="VBox" type="VBoxContainer" parent="CenterArea/MenuButtonsPanel" unique_id=354959598]
@@ -215,21 +233,12 @@ theme_override_constants/separation = 14
 
 [node name="Title" type="Label" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=1590127494]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 46
+theme_override_fonts/font = ExtResource("4_r2toe")
+theme_override_font_sizes/font_size = 100
 text = "BANG BANG DUO"
-horizontal_alignment = 1
-
-[node name="Subtitle" type="Label" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=998034495]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 20
-text = "MODULAR 3D MULTIPLAYER"
 horizontal_alignment = 1
 
 [node name="NameRow" type="HBoxContainer" parent="CenterArea/MenuButtonsPanel/VBox" unique_id=2132566043]
@@ -239,7 +248,7 @@ theme_override_constants/separation = 8
 [node name="NameLabel" type="Label" parent="CenterArea/MenuButtonsPanel/VBox/NameRow" unique_id=1988359118]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 text = "NAME:"
 
@@ -247,7 +256,7 @@ text = "NAME:"
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
 text = "Player"
@@ -259,7 +268,7 @@ custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.15, 0.22, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_grey_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_grey_prs")
@@ -273,7 +282,7 @@ theme_override_constants/separation = 8
 [node name="CharacterLabel" type="Label" parent="CenterArea/MenuButtonsPanel/VBox/CharacterRow" unique_id=1988359119]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 22
 text = "HERO:"
 
@@ -281,7 +290,7 @@ text = "HERO:"
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
@@ -291,8 +300,12 @@ text = "WEYZERO CODES"
 [node name="AtoBtn" type="Button" parent="CenterArea/MenuButtonsPanel/VBox/CharacterRow" unique_id=355672434]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_grey_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_grey_prs")
@@ -304,8 +317,8 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 32
+theme_override_fonts/font = ExtResource("4_r2toe")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
@@ -316,8 +329,8 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 32
+theme_override_fonts/font = ExtResource("4_r2toe")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
@@ -328,8 +341,8 @@ custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
+theme_override_fonts/font = ExtResource("4_r2toe")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_blue_hov")
@@ -340,8 +353,8 @@ custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.15, 0.22, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 28
+theme_override_fonts/font = ExtResource("4_r2toe")
+theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_grey_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_grey_prs")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_grey_hov")
@@ -352,7 +365,7 @@ custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
@@ -362,7 +375,18 @@ text = "QUIT GAME"
 [node name="HostPanel" type="PanelContainer" parent="CenterArea" unique_id=1028741218]
 visible = false
 custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -273.0
+offset_right = 360.0
+offset_bottom = 273.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
 
 [node name="VBox" type="VBoxContainer" parent="CenterArea/HostPanel" unique_id=1446278252]
@@ -372,11 +396,10 @@ alignment = 1
 
 [node name="HostTitle" type="Label" parent="CenterArea/HostPanel/VBox" unique_id=1980715207]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 44
 text = "HOST MULTIPLAYER MATCH"
 horizontal_alignment = 1
@@ -384,7 +407,7 @@ horizontal_alignment = 1
 [node name="IPHeader" type="Label" parent="CenterArea/HostPanel/VBox" unique_id=1012197657]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.2, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "YOUR IP ADDRESS (SHARE WITH DUO PARTNER):"
 horizontal_alignment = 1
@@ -404,7 +427,7 @@ theme_override_colors/font_color = Color(0, 1, 0.85, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 46
 text = "127.0.0.1"
 horizontal_alignment = 1
@@ -413,7 +436,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(130, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
@@ -437,7 +460,7 @@ alignment = 1
 [node name="PortLabel" type="Label" parent="CenterArea/HostPanel/VBox/PortRow" unique_id=1220863122]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.92, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 text = "PORT:"
 
@@ -445,7 +468,7 @@ text = "PORT:"
 custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
 text = "8910"
@@ -455,7 +478,7 @@ alignment = 1
 [node name="HostStatusLabel" type="Label" parent="CenterArea/HostPanel/VBox" unique_id=926668733]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 text = "READY TO LAUNCH. PARTNER WILL JOIN VIA YOUR IP."
 horizontal_alignment = 1
@@ -465,7 +488,7 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
@@ -477,7 +500,7 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
@@ -487,7 +510,18 @@ text = "BACK TO MENU"
 [node name="JoinPanel" type="PanelContainer" parent="CenterArea" unique_id=759086406]
 visible = false
 custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -250.0
+offset_right = 360.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
 
 [node name="VBox" type="VBoxContainer" parent="CenterArea/JoinPanel" unique_id=1473036040]
@@ -497,11 +531,10 @@ alignment = 1
 
 [node name="JoinTitle" type="Label" parent="CenterArea/JoinPanel/VBox" unique_id=570153602]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 44
 text = "JOIN MULTIPLAYER MATCH"
 horizontal_alignment = 1
@@ -509,7 +542,7 @@ horizontal_alignment = 1
 [node name="IPLabel" type="Label" parent="CenterArea/JoinPanel/VBox" unique_id=559940263]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.2, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "ENTER HOST IP ADDRESS & PORT:"
 horizontal_alignment = 1
@@ -523,7 +556,7 @@ custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
 text = "127.0.0.1"
@@ -534,7 +567,7 @@ alignment = 1
 custom_minimum_size = Vector2(100, 54)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_input_box_ui")
 text = "8910"
@@ -544,7 +577,7 @@ alignment = 1
 [node name="JoinStatusLabel" type="Label" parent="CenterArea/JoinPanel/VBox" unique_id=1948915005]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 text = "READY TO CONNECT TO HOST."
 horizontal_alignment = 1
@@ -554,7 +587,7 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.9, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 34
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_blue_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_blue_prs")
@@ -566,7 +599,7 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
@@ -576,7 +609,18 @@ text = "BACK TO MENU"
 [node name="VoicePanel" type="PanelContainer" parent="CenterArea" unique_id=34391641]
 visible = false
 custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -250.0
+offset_right = 360.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
 
 [node name="VBox" type="VBoxContainer" parent="CenterArea/VoicePanel" unique_id=296413946]
@@ -586,11 +630,10 @@ alignment = 1
 
 [node name="VoiceTitle" type="Label" parent="CenterArea/VoicePanel/VBox" unique_id=206277479]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 44
 text = "VOXIDE VOICE ASSISTANT"
 horizontal_alignment = 1
@@ -598,7 +641,7 @@ horizontal_alignment = 1
 [node name="VoiceSubtitle" type="Label" parent="CenterArea/VoicePanel/VBox" unique_id=2074852484]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.88, 0.2, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 22
 text = "HOLD SPACEBAR OR TALK BUTTON TO SPEAK (MAIN MENU ONLY)"
 horizontal_alignment = 1
@@ -607,6 +650,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 240)
 layout_mode = 2
 size_flags_vertical = 3
+theme = SubResource("Theme_r2toe")
 script = ExtResource("4_voice")
 background_color = Color(0.06, 0.12, 0.2, 0.9)
 border_color = Color(0.2, 0.45, 0.75, 0.8)
@@ -616,7 +660,7 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
@@ -626,7 +670,18 @@ text = "BACK TO MENU"
 [node name="SettingsPanel" type="PanelContainer" parent="CenterArea" unique_id=871217769]
 visible = false
 custom_minimum_size = Vector2(720, 500)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -250.0
+offset_right = 360.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_wide_modal_ui")
 
 [node name="VBox" type="VBoxContainer" parent="CenterArea/SettingsPanel" unique_id=2062355714]
@@ -636,11 +691,10 @@ alignment = 1
 
 [node name="SettingsTitle" type="Label" parent="CenterArea/SettingsPanel/VBox" unique_id=403133576]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.95, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 44
 text = "CONTROLS & SETTINGS"
 horizontal_alignment = 1
@@ -658,70 +712,70 @@ columns = 2
 [node name="MoveKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=2119329916]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "[W][A][S][D]"
 
 [node name="MoveDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=591282379]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "Move Character"
 
 [node name="RunKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1425456285]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "[Shift]"
 
 [node name="RunDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1119680762]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "Sprint / Run"
 
 [node name="JumpKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1256767964]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "[Space]"
 
 [node name="JumpDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1629367544]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "Jump"
 
 [node name="AimKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1448978139]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "[Mouse Look]"
 
 [node name="AimDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1890015011]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "Look / Aim"
 
 [node name="MouseModeKey" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1362757263]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0.85, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "[ESC]"
 
 [node name="MouseModeDesc" type="Label" parent="CenterArea/SettingsPanel/VBox/ControlsCard/ControlsGrid" unique_id=1088424796]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "Toggle Mouse Cursor"
 
@@ -730,31 +784,12 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
 theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red_hov")
 text = "BACK TO MENU"
-
-[node name="FooterLabel" type="Label" parent="." unique_id=1554129557]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -42.0
-offset_right = 300.0
-offset_bottom = -14.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.7, 0.85, 1, 0.6)
-theme_override_fonts/font = ExtResource("3_jersey")
-theme_override_font_sizes/font_size = 22
-text = "BANG BANG DUO • MULTIPLAYER 3D ARENA"
-horizontal_alignment = 1
 
 [node name="HUD" type="Control" parent="." unique_id=1203606441]
 visible = false
@@ -788,7 +823,7 @@ theme_override_colors/font_color = Color(0, 1, 0.9, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 30
 text = "PLAYER"
 
@@ -799,14 +834,14 @@ theme_override_constants/separation = 12
 [node name="RoleBadge" type="Label" parent="HUD/TopLeftCard/Panel/VBox/StatusRow" unique_id=1321798870]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 1, 0.5, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 20
 text = "ROLE: HOST"
 
 [node name="ActivePlayers" type="Label" parent="HUD/TopLeftCard/Panel/VBox/StatusRow" unique_id=1440339173]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.9, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 20
 text = "PLAYERS: 1"
 
@@ -827,7 +862,7 @@ custom_minimum_size = Vector2(170, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(1, 0.9, 0.9, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red_norm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_prs")
@@ -872,7 +907,7 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_ip_box_ui")
 [node name="ControlsLabel" type="Label" parent="HUD/BottomLeftCard/Panel" unique_id=1073804058]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.92, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 19
 text = "[WASD] MOVE • [SPACE] JUMP • [SHIFT] SPRINT • [LMB] SHOOT • [1-5/SCROLL] WEAPON • [R] RELOAD • [ESC] CURSOR"
 
@@ -905,14 +940,14 @@ theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 26
 text = "PULSE BLASTER"
 
 [node name="ShootTypeLabel" type="Label" parent="HUD/BottomRightCard/Panel/VBox" unique_id=1276945111]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.95, 1, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 18
 text = "[FULL AUTO]"
 
@@ -923,21 +958,21 @@ theme_override_constants/separation = 8
 [node name="AmmoTag" type="Label" parent="HUD/BottomRightCard/Panel/VBox/AmmoRow" unique_id=95103155]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 0.8)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 20
 text = "AMMO"
 
 [node name="AmmoCurrentLabel" type="Label" parent="HUD/BottomRightCard/Panel/VBox/AmmoRow" unique_id=1140030375]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 36
 text = "30"
 
 [node name="AmmoReserveLabel" type="Label" parent="HUD/BottomRightCard/Panel/VBox/AmmoRow" unique_id=263995924]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 0.9)
-theme_override_fonts/font = ExtResource("3_jersey")
+theme_override_fonts/font = ExtResource("4_r2toe")
 theme_override_font_sizes/font_size = 24
 text = "/ 120"
 
@@ -961,6 +996,6 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_jersey")
 theme_override_font_sizes/font_size = 28
+text = "ACQUIRED: MACHINE GUN [FULL AUTO]"
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "ACQUIRED: MACHINE GUN [FULL AUTO]"

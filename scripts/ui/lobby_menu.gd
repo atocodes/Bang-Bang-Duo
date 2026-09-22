@@ -10,7 +10,7 @@ extends Control
 @onready var overlay_tint: ColorRect = $OverlayTint
 
 # --- CenterArea & Panels ---
-@onready var center_area: CenterContainer = $CenterArea
+@onready var center_area: Control = $CenterArea
 @onready var menu_buttons_panel: PanelContainer = $CenterArea/MenuButtonsPanel
 @onready var host_panel: PanelContainer = $CenterArea/HostPanel
 @onready var join_panel: PanelContainer = $CenterArea/JoinPanel
