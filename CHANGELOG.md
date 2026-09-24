@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-09-24
+
+### Added
+- **Player Health System & Combat Damage Replication**:
+  - Full networked player health (`100 HP`) synchronized across peers.
+  - Overhead 3D billboard `HealthTag` with dynamic traffic light color coding (Green > 55%, Yellow > 25%, Red <= 25%).
+  - Replicated bullet raycast hit registration, weapon-specific damage application, and physical impact knockback impulses.
+  - Visual damage feedback: red flash material overlay and localized spark impact particle burst.
+  - Server-authoritative death and respawn loop (`respawn_rpc`) with full health restoration and repositioning to arena spawn points.
+- **HUD Combat & Vitality Overhaul**:
+  - Top-left vitality status display featuring an animated in-game Health Bar and precise numerical HP readout.
+  - Dynamic Duo Target Radar (`hud_opponent_radar`) displaying live vitals and combat readiness of opponents.
+- **Educational Code Logic Visualizer & GDScript Deconstructor Dock**:
+  - Built-in real-time developer visualizer dock (`CodeLogicDock` / `CodeLogicBus`) providing live GDScript execution tracing for physics kinematics, condition evaluations, netcode RPCs, weapon state transitions, and ballistics math.
+  - Ring-buffer based high-performance entry logging with fading modulate transitions and zero runtime overhead when toggled off.
+  - Keybinding toggle (`F1`) to inspect under-the-hood engine math, physics impulses, and formulas in real time.
+- **Custom Arcade Typography & Enhanced Lobby Layout**:
+  - Integrated custom arcade font `PhantomGuardiansCoolGamingBold` (`PhantomGuardiansCoolGamingBold-q2Rlx.otf`).
+  - Redesigned lobby layout with responsive hero selection buttons (`Weyzero Codes` / `Ato Codes`), firing mode badges, and pickup notification toasts.
+
+### Changed
+- Updated `project.godot` configuration to version `0.5.0`.
+- Refactored projectile collision raycast handling to trigger `take_damage` on hit actors with sender peer attribution.
+- Hooked up local player health events to automatically drive the HUD health bar, overhead nametags, and respawn cycles.
+
+---
+
 ## [0.4.0] - 2026-09-19
 
 ### Added

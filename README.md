@@ -1,5 +1,6 @@
 # 💥 Bang Bang Duo — 3D Multiplayer Arena Shooter (Godot 4)
 
+[![Version](https://img.shields.io/badge/Version-0.5.0-blue.svg)](CHANGELOG.md)
 [![Godot Engine](https://img.shields.io/badge/Godot-4.7+-478CBF?logo=godotengine&logoColor=white)](https://godotengine.org/)
 [![Physics](https://img.shields.io/badge/Physics-Jolt_3D-FF6B6B)](https://github.com/godot-jolt/godot-jolt)
 [![Networking](https://img.shields.io/badge/Multiplayer-ENet_RPC-2EA44F)](https://docs.godotengine.org/en/stable/tutorials/networking/high_level_multiplayer.html)
@@ -7,21 +8,23 @@
 [![Changelog](https://img.shields.io/badge/Changelog-Keep_a_Changelog-orange.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Bang Bang Duo** is a fast-paced, modular 3D multiplayer arena shooter built with **Godot 4**, **GDScript**, **Jolt 3D Physics**, and Godot's **High-Level Multiplayer API**. Featuring responsive third-person combat, selectable animated 3D characters, tactical in-world weapon pickups, timed reloads, server-authoritative replication, and an integrated **Voxide Voice AI Assistant** directly in the lobby.
+**Bang Bang Duo** is a fast-paced, modular 3D multiplayer arena shooter built with **Godot 4**, **GDScript**, **Jolt 3D Physics**, and Godot's **High-Level Multiplayer API**. Featuring responsive third-person combat, selectable animated 3D characters, tactical in-world weapon pickups, timed reloads, synchronized player health & damage physics, server-authoritative replication, an educational live **Code Logic Visualizer Dock**, and an integrated **Voxide Voice AI Assistant** directly in the lobby.
 
 ---
 
 ## 🎮 Game Overview
 
-In **Bang Bang Duo**, players jump into a sci-fi arena for fast-paced, tactical combat. The game combines responsive movement mechanics with a scavenger weapon pickup system and seamless networking:
+In **Bang Bang Duo**, players jump into a sci-fi arena for fast-paced, tactical combat. The game combines responsive movement mechanics with a scavenger weapon pickup system, physical damage feedback, and seamless networking:
 
 - **Third-Person Tactical Perspective**: Smooth over-the-shoulder camera with mouse look, pitch clamping, and collision-aware spring arm.
 - **Selectable 3D Characters & Animations**: Play as **Weyzero Codes** or **Ato Codes** with full locomotion and combat animations (Idle, Walk, Sprint, Jump, Aim, Fire, Death) and procedural `SkeletonIK3D` left-hand grip alignment.
 - **Unarmed Spawns & Scavenging Loop**: Players spawn unarmed and must scavenge the arena to pick up weapons from floating, glowing pickup stations.
+- **Networked Health, Damage & Knockback**: Replicated damage system with physical impact knockback impulses, red-flash visual feedback, spark particle bursts, overhead 3D health meters, and instant server-authoritative arena respawns.
 - **Dynamic 3D Crosshair Aiming**: Weapons automatically orient toward the exact world point targeted by your crosshair with responsive weapon recoil.
 - **Kenney Blaster Kit Arsenal**: 5 distinct modular weapons with unique ballistic behaviors, fire rates, spread, damage, plasma FX, and timed reload cycles.
 - **Interactive 3D Weapon Pickups**: Rotating 3D blaster models with sinusoidal bobbing, glowing omni-lights matching weapon plasma, 3D billboard labels, and network-synchronized respawn timers.
 - **Tactical Timed Reloading**: Configurable reload durations, automatic reload triggers on magazine depletion, and intelligent reload cancellation on weapon switching.
+- **Educational Code Logic Visualizer**: Live GDScript engine deconstructor dock (`F1`) displaying real-time kinematics, raycast ballistics, condition checks, and netcode breakdown.
 - **Voice AI Enabled Lobby**: Hands-free lobby management, matchmaking commands, and player configuration powered by the **Voxide Voice Assistant**.
 - **Server-Authoritative Networking**: Clean multiplayer replication using `MultiplayerSpawner` and `MultiplayerSynchronizer`.
 
@@ -117,6 +120,42 @@ The game features 5 distinct weapons built on the extensible `WeaponData` resour
 
 ---
 
+## ❤️ Health, Damage & Arena Respawn System
+
+The combat loop features fully replicated vitality management and physical impact responses:
+
+- **100 HP Health Pool**: Both local and remote peers track current and maximum health.
+- **Overhead 3D Billboard (`HealthTag`)**: Dynamically floats above each character, displaying real-time HP values with dynamic color coding:
+  - 🟢 **Healthy** (>55% HP): `#34d399` Emerald
+  - 🟡 **Wounded** (25%–55% HP): `#fbbf24` Amber
+  - 🔴 **Critical** (<=25% HP): `#f87171` Crimson
+- **Damage & Physical Knockback**:
+  - Direct raycast hits invoke `take_damage(amount, attacker_id, dir, pos)` with weapon-calibrated damage values.
+  - Generates directional velocity impulses upon impact to push targets back.
+  - Mesh flash red feedback and dynamic 3D spark particle bursts at the contact point.
+- **Server-Authoritative Respawn (`respawn_rpc`)**:
+  - Depleting health to 0 triggers instant network-synchronized respawn at arena spawn points with full health restoration.
+
+---
+
+## 🔬 Live Code Logic Visualizer & Engine Deconstructor
+
+Press **`F1`** at any time during gameplay to toggle the **Live Code Logic Dock**. This transparent overlay streams real-time execution events, physics formulas, and condition evaluations under the hood:
+
+```
+[00:14.280] ⟨MATH:LERP:KINEMATICS⟩ v = move_toward(dir*spd, a*dt) ➜ vel:(4.2, 0.0, -5.8)
+[00:14.340] ⟨EXEC:BALLISTICS⟩ _spawn_bullet() ➜ speed:115.0m/s | dmg:25.0 | aim:(12.4, 1.2, -8.0)
+[00:14.352] ⟨COLLISION:RAYCAST⟩ INTERSECT QUERY ➜ hit:Player(2) ➜ dmg:25
+[00:14.354] ⟨EXEC:PHYSICS⟩ apply_knockback() ➜ impulse:(0.0, 1.8, 8.8) | vel:(0.0, 1.8, 8.8)
+[00:14.355] ⟨COND:COMBAT⟩ take_damage(25.0, attacker:1) [TRUE] ➜ hp:100->75 [ALIVE]
+```
+
+- **Ring-Buffer Event Bus (`CodeLogicBus`)**: High-throughput memory-safe ring buffer storing formatted entries with timestamp and color-coded tags.
+- **Under-the-Hood Educational Tracing**: Deconstructs math, kinematics, and networking state transitions in real time.
+- **Zero Runtime Overhead**: Toggling the visualizer off completely short-circuits tracing to guarantee 0 FPS loss in performance-critical gameplay.
+
+---
+
 ## ⌨️ Controls & Keybindings
 
 | Action | Primary Input | Secondary / Alternative |
@@ -132,6 +171,7 @@ The game features 5 distinct weapons built on the extensible `WeaponData` resour
 | **Reload Weapon** | `R` | — |
 | **Select Weapon Slot 1–5** | `1`, `2`, `3`, `4`, `5` | — |
 | **Cycle Weapon Up/Down** | `Mouse Wheel Up / Down` | — |
+| **Toggle Code Logic Dock** | `F1` | — |
 | **Toggle Mouse Capture** | `Escape` | — |
 
 ---
@@ -156,10 +196,13 @@ bang-bang-duo/
 │   │   ├── map_geometry.tscn         # Modular arena geometry (corridors, rooms, gates)
 │   │   └── world.tscn                # 3D Arena with Spawner, lighting & weapon stations
 │   └── ui/
+│       ├── code_logic_dock.tscn      # Live Code Logic Visualizer developer dock
 │       ├── lobby_menu.tscn           # Host / Join menu, Voice UI & In-game HUD
 │       └── lobby_theme.tres          # Polished UI theme resources
 │
 ├── scripts/
+│   ├── debug/
+│   │   └── code_logic_bus.gd         # Autoload: High-speed ring-buffer event stream
 │   ├── helper/
 │   │   └── ip_helper.gd              # Local IP detection & clipboard utility
 │   ├── network/
@@ -177,9 +220,11 @@ bang-bang-duo/
 │   ├── world/
 │   │   └── world.gd                  # Server-side player spawning & despawning
 │   └── ui/
+│       ├── code_logic_dock.gd        # Developer dock UI & fading modulate animations
 │       └── lobby_menu.gd             # Menu logic, Voxide integration & HUD updates
 │
 ├── tests/
+│   ├── test_code_logic_visualizer.gd # Headless unit tests for CodeLogicBus and Dock
 │   ├── test_runner.gd                # Automated test runner for game systems
 │   └── test_runner.tscn              # Test harness scene
 │
@@ -188,7 +233,8 @@ bang-bang-duo/
 │   └── voxide/                       # Voxide Voice AI Assistant runtime & nodes
 │
 └── assets/
-    ├── kenney_blaster-kit/           # 3D weapon models (Blasters, Rifles, Snipers)
+    ├── font/                         # PhantomGuardiansCoolGamingBold arcade typography
+    ├── kenney_blaster_kit/           # 3D weapon models (Blasters, Rifles, Snipers)
     ├── kenney_ui/                    # Audio SFX and graphical assets
     ├── map/                          # Modular corridor, room, and gate 3D models
     └── player_models/                # Weyzero Codes & Ato Codes 3D models and anims
